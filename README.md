@@ -10,6 +10,7 @@ Avant, il faut ajouté le projet Angular compilé qui doit se retrouvé dans app
 Après, pour compresser l'application en asar, suivre ces étapes:
 1. transfèrer les fichier compilé dans le dossier app/dist/en.
 2. Si ce n'est pas fait, il faut installer la commande asar avec cette commande: npm install --engine-strict asar
-3. Pour compresser, il suffit d'entrer la commande dans un terminal : asar pack *emplacement* app.asar. Exemple: asar pack C:\User\user\app app.asar
+3. Faire un npm init dans le dossier app à l'aide d'un terminal
+4. Pour compresser, il suffit d'entrer la commande: asar pack *emplacement* app.asar. Exemple: asar pack C:\User\user\app app.asar
 
 Maintenant, le fichier app.asar est prêt à être mis dans le raspberry pi dans /opt/Octodash/ressources.
