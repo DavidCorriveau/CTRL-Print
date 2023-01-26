@@ -1,0 +1,49 @@
+{
+  "name": "octodash",
+  "description": "OctoDash is a simple, but beautiful dashboard for Octoprint.",
+  "version": "2.3.1",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/UnchartedBull/OctoDash",
+  "author": "Timon Gaebelein <timon.gaebelein@icloud.com>",
+  "main": "main.js",
+  "browserslist": [
+    "chrome > 87"
+  ],
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "~13.2.4",
+    "@angular/cdk": "~13.2.0",
+    "@angular/common": "~13.2.4",
+    "@angular/compiler": "~13.0.3",
+    "@angular/core": "~13.2.0",
+    "@angular/forms": "~13.2.4",
+    "@angular/localize": "~13.0.3",
+    "@angular/material": "~13.2.4",
+    "@angular/platform-browser": "~13.2.4",
+    "@angular/platform-browser-dynamic": "~13.2.4",
+    "@angular/router": "~13.2.4",
+    "@fortawesome/angular-fontawesome": "~0.10.1",
+    "@fortawesome/fontawesome-svg-core": "~1.2.36",
+    "@fortawesome/free-solid-svg-icons": "~5.15.4",
+    "ajv": "~8.10.0",
+    "angular-svg-round-progressbar": "~8.0.0",
+    "asar": "^3.2.0",
+    "bonjour": "~3.5.0",
+    "compare-versions": "~4.1.3",
+    "electron-store": "~8.0.1",
+    "got-cjs": "~12.0.1",
+    "lodash-es": "~4.17.21",
+    "lottie-web": "~5.8.1",
+    "ngx-lottie": "~8.0.1",
+    "ngx-spinner": "~13.1.1",
+    "progress-stream": "~2.0.0",
+    "rxjs": "~7.5.4",
+    "tslib": "~2.3.1",
+    "v8-compile-cache": "~2.3.0",
+    "zone.js": "~0.11.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {}
+}
