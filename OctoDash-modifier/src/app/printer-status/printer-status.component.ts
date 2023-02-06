@@ -20,9 +20,19 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
   public hotendTarget: number;
   public heatbedTarget: number;
   public fanTarget: number;
+  public enclosureTarget: number;
+  public filamentsTarget: number;
 
   public QuickControlView = QuickControlView;
   public view = QuickControlView.NONE;
+
+  public maxTemperatureEnclosure: 70;
+  public minTemperatureEnclosure: 0;
+  public maxTemperatureFilaments: 60;
+  public minTemperatureFilaments: 0;
+
+  public enclosureTemperature: number;
+  public filamentsTemperature: number;
 
   public constructor(
     private printerService: PrinterService,
@@ -61,6 +71,16 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
     this.showQuickControl();
   }
 
+  public showQuickControlEnclosure(): void {
+    this.view = QuickControlView.ENCLOSURE;
+    this.showQuickControl();
+  }
+
+  public showQuickControlFilaments(): void {
+    this.view = QuickControlView.FILAMENTS;
+    this.showQuickControl();
+  }
+
   private showQuickControl(): void {
     setTimeout((): void => {
       const controlViewDOM = document.getElementById('quickControl');
@@ -91,6 +111,12 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
       case QuickControlView.FAN:
         this.changeSpeedFan(value);
         break;
+      case QuickControlView.ENCLOSURE:
+        this.changeTemperatureEnclosure(value);
+        break;
+      case QuickControlView.FILAMENTS:
+        this.changeTemperatureFilaments(value);
+        break;
     }
   }
 
@@ -105,6 +131,12 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
       case QuickControlView.FAN:
         this.setFanSpeed();
         break;
+      case QuickControlView.ENCLOSURE:
+        this.setTemperatureEnclosure();
+        break;
+      case QuickControlView.FILAMENTS:
+        this.setTemperatureFilaments();
+         break;
     }
   }
 
@@ -141,6 +173,24 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
     }
   }
 
+  private changeTemperatureEnclosure(value: number): void {
+    this.enclosureTarget += value;
+    if (this.enclosureTarget < this.minTemperatureEnclosure) {
+      this.enclosureTarget = this.minTemperatureEnclosure;
+    } else if (this.enclosureTarget > this.maxTemperatureEnclosure) {
+      this.enclosureTarget = this.maxTemperatureEnclosure;
+    }
+  }
+
+  private changeTemperatureFilaments(value: number): void {
+    this.filamentsTarget += value;
+    if (this.filamentsTarget < this.minTemperatureFilaments) {
+      this.filamentsTarget = this.minTemperatureFilaments;
+    } else if (this.filamentsTarget > this.maxTemperatureFilaments) {
+      this.filamentsTarget = this.maxTemperatureFilaments;
+    }
+  }
+
   private setTemperatureHotend(): void {
     this.printerService.setTemperatureHotend(this.hotendTarget);
     this.hideQuickControl();
@@ -155,6 +205,16 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
     this.printerService.setFanSpeed(this.fanTarget);
     this.hideQuickControl();
   }
+
+  private setTemperatureEnclosure(): void {
+    this.enclosureTemperature = this.enclosureTarget;
+    this.hideQuickControl();
+  }
+
+  private setTemperatureFilaments(): void {
+    this.filamentsTemperature = this.filamentsTarget;
+    this.hideQuickControl();
+  }
 }
 
 enum QuickControlView {
@@ -162,4 +222,6 @@ enum QuickControlView {
   HOTEND,
   HEATBED,
   FAN,
+  ENCLOSURE,
+  FILAMENTS
 }

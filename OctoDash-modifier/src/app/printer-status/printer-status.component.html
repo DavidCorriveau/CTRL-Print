@@ -2,7 +2,6 @@
   <tr>
     <td
       class="printer-status__value printer-status__value-1"
-      [ngClass]="{ 'printer-status__no-set-value': printerStatus.tool0.set === 0 }"
       (click)="showQuickControlHotend()"
       matRipple
       [matRippleUnbounded]="false"
@@ -12,13 +11,12 @@
         {{ printerStatus.tool0.current }}<span class="printer-status__unit">°C</span>
       </span>
       <span class="printer-status__set-value" *ngIf="printerStatus.tool0.set">
-        /{{ printerStatus.tool0.set }}<span class="unit">°C</span>
+        /{{ printerStatus.tool0.set }}<span class="printer-status__unit">°C</span>
       </span>
     </td>
 
     <td
       class="printer-status__value printer-status__value-2"
-      [ngClass]="{ 'printer-status__no-set-value': printerStatus.bed.set === 0 }"
       (click)="showQuickControlHeatbed()"
       matRipple
       [matRippleUnbounded]="false"
@@ -41,6 +39,48 @@
       <img src="assets/fan.svg" />
       <span class="printer-status__actual-value">
         {{ printerStatus.fanSpeed >= 0 ? printerStatus.fanSpeed : '-- ' }}<span class="printer-status__unit">%</span>
+      </span>
+    </td>
+
+    <td
+      class="printer-status__value printer-status__value-4"
+      (click)="showQuickControlHotend()"
+      matRipple
+      [matRippleUnbounded]="false"
+    >
+      <img src="assets/enclosure.svg" />
+      <span class="printer-status__actual-value">
+        {{ printerStatus.tool0.current }}<span class="printer-status__unit">°C</span>
+      </span>
+      <span class="printer-status__set-value" *ngIf="printerStatus.tool0.set">
+        /{{ printerStatus.tool0.set }}<span class="printer-status__unit">°C</span>
+      </span>
+    </td>
+
+    <td
+    class="printer-status__value printer-status__value-5"
+    (click)="showQuickControlHotend()"
+    matRipple
+    [matRippleUnbounded]="false"
+  >
+    <img src="assets/filaments_3D.svg" />
+    <span class="printer-status__actual-value">
+      {{ printerStatus.tool0.current }}<span class="printer-status__unit">°C</span>
+    </span>
+    <span class="printer-status__set-value" *ngIf="printerStatus.tool0.set">
+      /{{ printerStatus.tool0.set }}<span class="printer-status__unit">°C</span>
+    </span>
+  </td>
+
+    <td
+      class="printer-status__value printer-status__value-5"
+      (click)="showQuickControlHotend()"
+      matRipple
+      [matRippleUnbounded]="false"
+    >
+      <img src="assets/humidity.svg" />
+      <span class="printer-status__actual-value">
+        {{ printerStatus.tool0.current }}<span class="printer-status__unit">%</span>
       </span>
     </td>
   </tr>
