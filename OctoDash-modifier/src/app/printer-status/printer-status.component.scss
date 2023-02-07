@@ -1,3 +1,4 @@
+// Propriétés du tableau
 .printer-status {
   table-layout: fixed;
   width: 100%;
@@ -7,9 +8,10 @@
   margin-left: 6vh;
 
   &__value { 
-    text-align: center;
-    vertical-align: top;
+    text-align: center; // Centre tous les textes présents dans toutes les cases du tableau
+    vertical-align: top;  // Aligne tous les objets vers le haut dans toutes les cases du tableau
 
+    // Dimensionne toutes les images du tableau
     & img {
       padding-left: 2.75vw;
       padding-right: 2.75vw;
@@ -17,42 +19,43 @@
       width: 9vw;
     }
 
+    
     &-1 {
-      width: 15.5vw;
+      width: 15.5vw;  // Aplique une longueur à la case 1
     }
-
+    
     &-2 {
-      width: 15.5vw;
+      width: 15.5vw;  // Aplique une longueur à la case 2
     }
-
+    
     &-3 {
-      width: 15.5vw;
+      width: 15.5vw;  // Aplique une longueur à la case 3
     }
-
+    
     &-4 {
-      width: 15.5vw;
+      width: 15.5vw;  // Aplique une longueur à la case 4
     }
-
+    
     &-5 {
-      width: 15.5vw;
+      width: 15.5vw;  // Aplique une longueur à la case 5
     }
-
+    
     &-6 {
-      width: 15.5vw;
+      width: 15.5vw;  // Aplique une longueur à la case 6
     }
   }
-
+  
   &__unit {
-    font-size: 90%;
+    font-size: 90%; // Applique une grosseur des caractères pour les unités
   }
-
+  
   &__actual-value {
-    font-size: 90%;
-    font-weight: 500;
+    font-size: 90%; // Applique une grosseur des caractères pour les valeurs mesurés par les capteurs
+    font-weight: 500; // Met les caractères en gras
   }
 
   &__set-value {
-    font-size: 90%;
+    font-size: 90%; // Applique une grosseur des caractères pour les valeur appliquées
   }
 }
 

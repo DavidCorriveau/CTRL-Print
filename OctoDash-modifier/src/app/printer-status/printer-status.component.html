@@ -1,20 +1,26 @@
+<!-- Tableau qui contient les boutons et les informations de l'imprimante et de l'enceinte -->
 <table class="printer-status" *ngIf="printerStatus">
-  <tr>
-    <td
+  <tr> <!-- une rangée -->
+
+    <!-- Une case qui agit comme un bouton qui appel la méthode pour afficher le controle de la buse de l'imprimante -->
+    <td 
       class="printer-status__value printer-status__value-1"
-      (click)="showQuickControlHotend()"
+      (click)="showQuickControlHotend()"  
       matRipple
       [matRippleUnbounded]="false"
     >
       <img src="assets/nozzle.svg" />
+      <!-- Affiche la température courante de la buse en celcius -->
       <span class="printer-status__actual-value">
         {{ printerStatus.tool0.current }}<span class="printer-status__unit">°C</span>
       </span>
+      <!-- Affiche la température appliquée de la buse en celcius si elle est appliquée -->
       <span class="printer-status__set-value" *ngIf="printerStatus.tool0.set">
         /{{ printerStatus.tool0.set }}<span class="printer-status__unit">°C</span>
       </span>
     </td>
 
+    <!-- Une case qui agit comme un bouton qui appel la méthode pour afficher le controle pour le plateau chauffant de l'imprimante -->
     <td
       class="printer-status__value printer-status__value-2"
       (click)="showQuickControlHeatbed()"
@@ -22,14 +28,17 @@
       [matRippleUnbounded]="false"
     >
       <img src="assets/heat-bed.svg" />
+      <!-- Affiche la température courante du plateau en celcius -->
       <span class="printer-status__actual-value">
         {{ printerStatus.bed.current }}<span class="printer-status__unit">°C</span>
       </span>
+      <!-- Affiche la température appliquée du plateau en celcius si elle est appliquée -->
       <span class="printer-status__set-value" *ngIf="printerStatus.bed.set">
         /{{ printerStatus.bed.set }}<span class="unit">°C</span>
       </span>
     </td>
 
+    <!-- Une case qui agit comme un bouton qui appel la méthode pour afficher le controle du ventilateur de la buse -->
     <td
       class="printer-status__value printer-status__value-3 printer-status__no-set-value"
       (click)="showQuickControlFan()"
@@ -37,52 +46,58 @@
       [matRippleUnbounded]="false"
     >
       <img src="assets/fan.svg" />
+      <!-- Affiche la vitesse du ventilateur de la buse en pourcentage -->
       <span class="printer-status__actual-value">
         {{ printerStatus.fanSpeed >= 0 ? printerStatus.fanSpeed : '-- ' }}<span class="printer-status__unit">%</span>
       </span>
     </td>
 
+    <!-- Une case qui agit comme un bouton qui appel la méthode pour afficher le controle du boitier de l'imprimante -->
     <td
       class="printer-status__value printer-status__value-4"
-      (click)="showQuickControlHotend()"
+      (click)="showQuickControlEnclosure()"
       matRipple
       [matRippleUnbounded]="false"
     >
       <img src="assets/enclosure.svg" />
+      <!-- Affiche la température courante du boitier en celcius -->
       <span class="printer-status__actual-value">
-        {{ printerStatus.tool0.current }}<span class="printer-status__unit">°C</span>
+        {{ this.enclosureTemperature }}<span class="printer-status__unit">°C</span>
       </span>
-      <span class="printer-status__set-value" *ngIf="printerStatus.tool0.set">
-        /{{ printerStatus.tool0.set }}<span class="printer-status__unit">°C</span>
+      <!-- Affiche la température appliquée du boitier en celcius si elle n'est pas 0 -->
+      <span class="printer-status__set-value" *ngIf="this.tempEnclosureDesire != 0">
+        /{{ this.tempEnclosureDesire }}<span class="printer-status__unit">°C</span>
       </span>
     </td>
 
+    <!-- Une case qui agit comme un bouton qui appel la méthode pour afficher le controle de l'emplacement des filaments -->
     <td
     class="printer-status__value printer-status__value-5"
-    (click)="showQuickControlHotend()"
+    (click)="showQuickControlFilaments()"
     matRipple
     [matRippleUnbounded]="false"
   >
     <img src="assets/filaments_3D.svg" />
+    <!-- Affiche la température courante de l'emplacement des filaments en celcius -->
     <span class="printer-status__actual-value">
-      {{ printerStatus.tool0.current }}<span class="printer-status__unit">°C</span>
+      {{ this.filamentsTemperature }}<span class="printer-status__unit">°C</span>
     </span>
-    <span class="printer-status__set-value" *ngIf="printerStatus.tool0.set">
-      /{{ printerStatus.tool0.set }}<span class="printer-status__unit">°C</span>
+    <!-- Affiche la température appliquée de l'emplacement des filaments en celcius si elle n'est pas 0 -->
+    <span class="printer-status__set-value" *ngIf="this.tempFilamentsDesire != 0">
+      /{{ this.tempFilamentsDesire }}<span class="printer-status__unit">°C</span>
     </span>
   </td>
 
-    <td
-      class="printer-status__value printer-status__value-5"
-      (click)="showQuickControlHotend()"
-      matRipple
-      [matRippleUnbounded]="false"
-    >
-      <img src="assets/humidity.svg" />
-      <span class="printer-status__actual-value">
-        {{ printerStatus.tool0.current }}<span class="printer-status__unit">%</span>
-      </span>
-    </td>
+  <!-- Une case qui affiche l'humidité de l'emplacement des filaments -->
+  <td
+     class="printer-status__value printer-status__value-5"
+  >
+     <img src="assets/humidity.svg" />
+     <!-- Affiche l'humidité courante de l'emplacement des filaments en pourcentage -->
+     <span class="printer-status__actual-value">
+       {{ this.humidite }}<span class="printer-status__unit">%</span>
+     </span>
+   </td>
   </tr>
 </table>
 
@@ -93,6 +108,7 @@
         <img src="assets/back.svg" class="top-bar__back-icon" matRipple [matRippleUnbounded]="false" />
       </td>
       <td class="top-bar__center">
+        <!-- Récupère l'image selon le controle chosisi -->
         <img
           [src]="
             'assets/' +
@@ -100,6 +116,10 @@
               ? 'nozzle.svg'
               : view === QuickControlView.HEATBED
               ? 'heat-bed.svg'
+              : view === QuickControlView.ENCLOSURE
+              ? 'enclosure.svg'
+              : view === QuickControlView.FILAMENTS
+              ? 'filaments_3D.svg'
               : 'fan.svg')
           "
           class="top-bar__center-icon"
@@ -159,6 +179,33 @@
     >
       {{ this.fanTarget }}
       <span class="quick-control__controller-value-unit">%</span>
+    </div>
+    <!-- Crée un bouton qui appel la méthode de changement de température cible en passant une valeur de -1000 pour changer entre le maximum -->
+    <!-- et le minimum du boitier-->
+    <div
+      class="quick-control__controller-value"
+      colspan="2"
+      *ngIf="view === QuickControlView.ENCLOSURE"
+      (click)="quickControlChangeValue(-1000)"
+      matRipple
+      [matRippleUnbounded]="false"
+    >
+      <!-- Affiche la valeur de la température cible du boitier -->
+      {{ this.enclosureTarget }}<span class="quick-control__controller-value-unit">°C</span>
+    </div>
+
+    <!-- Crée un bouton qui appel la méthode de changement de température cible en passant une valeur de -1000 pour changer entre le maximum -->
+    <!-- et le minimum du boitier-->
+    <div
+      class="quick-control__controller-value"
+      colspan="2"
+      *ngIf="view === QuickControlView.FILAMENTS"
+      (click)="quickControlChangeValue(-1000)"
+      matRipple
+      [matRippleUnbounded]="false"
+    >
+      <!-- Affiche la valeur de la température cible du boitier -->
+      {{ this.filamentsTarget }}<span class="quick-control__controller-value-unit">°C</span>
     </div>
 
     <div class="quick-control__controller-row">
