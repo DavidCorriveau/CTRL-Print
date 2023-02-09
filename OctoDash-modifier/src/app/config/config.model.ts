@@ -67,7 +67,8 @@ interface Plugin {
 }
 
 interface EnclosurePlugin extends Plugin {
-  ambientSensorID: number | null;
+  ambientSensorID: number | null; // Variable qui contient l'ID du capteur dans Octoprint qui sera dans l'enceinte avec l'imprimante 3D
+  storageSensorID: number | null; // Variable qui contient l'ID du capteur dans Octoprint qui sera dans l'emplacement des filaments
   filament1SensorID: number | null;
   filament2SensorID: number | null;
 }
