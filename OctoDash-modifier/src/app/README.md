@@ -1,4 +1,4 @@
-1.Afficher les données d'un capteur connecté au puglin Enclosure dans Octoprint
+1.Afficher les données d'un capteur connecté au plugin Enclosure dans Octoprint
 Mettre les bon ID dans la bonne case dans les paramètres puglin d'octodash.
 Exemple: le capteur physique pour l'enceinte a l'ID 1 dans Octoprint. Alors, mettre 1 dans la
  	 zone de texte pour l'ID du capteur dans l'enceinte dans Octodash.
