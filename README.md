@@ -14,3 +14,6 @@ Après, pour compresser l'application en asar, suivre ces étapes:
 4. Pour compresser, il suffit d'entrer la commande: asar pack *emplacement* app.asar. Exemple: asar pack C:\User\user\app app.asar
 
 Maintenant, le fichier app.asar est prêt à être mis dans le raspberry pi dans /opt/Octodash/ressources.
+
+
+Le dossier OctoPrint-Enclosure-master contient le code du plugin Enclosure d'Octoprint. Ce plugin nous permet de connecter des capteurs de températures et lier les température lues à des éléments chauffants pour qu'ils chauffent pour atteindre des températures précisées.
