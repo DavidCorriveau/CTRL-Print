@@ -104,7 +104,8 @@
     &__wrapper {
       display: block;
       width: 90vw;
-      margin: 6vh 5vw;
+      margin: 5vh 5vw;
+      overflow-x: auto;
     }
 
     &__change-parameter {
@@ -141,6 +142,7 @@
 
     &__name {
       margin-top: 5vh;
+      margin-bottom: 1vh;
       display: block;
       font-size: 0.8rem;
     }

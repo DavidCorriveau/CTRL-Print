@@ -165,8 +165,14 @@ export class ConfigService {
     return this.config.octodash.touchscreen;
   }
 
+  // Méthode qui va récupérer l'ID paramétré dans OctoDash du capteur pour l'enceinte
   public getAmbientTemperatureSensorName(): number {
     return this.config.plugins.enclosure.ambientSensorID;
+  }
+
+  // Méthode qui va récupérer l'ID paramétré dans OctoDash du capteur pour l'emplacement des filaments
+  public getStorageTemperatureSensorName(): number {
+    return this.config.plugins.enclosure.storageSensorID;
   }
 
   public getAutomaticScreenSleep(): boolean {

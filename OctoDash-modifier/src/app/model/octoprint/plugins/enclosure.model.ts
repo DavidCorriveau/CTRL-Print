@@ -22,6 +22,11 @@ export interface EnclosurePluginAPI {
   gpio_pin: string;
 }
 
+// Crée un nouveau model de variable pour aller écrire une température cible dans le plugin Enclosure dans Octoprint
+export interface EnclosureTemperature {
+  temperature: number;  // Contient une variable température
+}
+
 export interface EnclosureColorBody {
   red: number;
   green: number;

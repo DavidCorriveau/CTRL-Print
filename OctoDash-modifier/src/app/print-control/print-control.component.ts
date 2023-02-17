@@ -8,6 +8,7 @@ import { PrinterState, PrinterStatus } from '../model';
 import { JobService } from '../services/job/job.service';
 import { PrinterService } from '../services/printer/printer.service';
 import { SocketService } from '../services/socket/socket.service';
+import { EnclosureService } from '../services/enclosure/enclosure.service'; // Pour aller récupérer les informations de températures de l'enceinte
 
 @Component({
   selector: 'app-print-control',
@@ -28,18 +29,33 @@ export class PrintControlComponent implements OnInit, OnDestroy {
   public feedrate: number;
   public zOffset: number;
 
+  public enclosureTarget: number;
+  public storageTarget: number;
+  public maxTemperatureEnclosure: number;  // Valeur maximale de température pour le boitier
+  public minTemperatureEnclosure: number;   // Valeur minimale de température pour le boitier
+  public maxTemperatureFilaments: number;  // Valeur maximale de température pour l'espace des filaments
+  public minTemperatureFilaments: number;   // Valeur minimale de température pour l'espace des filaments
+
   public constructor(
     private jobService: JobService,
     private printerService: PrinterService,
     private configService: ConfigService,
     private socketService: SocketService,
     private router: Router,
+    private enclosureService: EnclosureService, // Instencie un objet EnclosureService
   ) {
     this.temperatureHotend = 0;
     this.temperatureHeatbed = 0;
     this.fanSpeed = 0;
     this.feedrate = 100;
     this.zOffset = 0;
+
+    this.enclosureService.enclosureTempDesire.subscribe(temp => this.enclosureTarget = temp); // Va récupérer la valeur paramétré pour le boitier
+    this.enclosureService.storageTempDesire.subscribe(temp => this.storageTarget = temp); // Va récupérer la valeur paramétré pour l'emplacement des filaments
+    this.enclosureService.minTempEnclosure.subscribe(temp => this.minTemperatureEnclosure = temp);  // Va récupérer la température minimum pour le boitier
+    this.enclosureService.maxTempEnclosure.subscribe(temp => this.maxTemperatureEnclosure = temp);  // Va récupérer la température maximum pour le boitier
+    this.enclosureService.minTempStorage.subscribe(temp => this.minTemperatureFilaments = temp);  // Va récupérer la température minimum pour l'emplacement des filaments
+    this.enclosureService.maxTempStorage.subscribe(temp => this.maxTemperatureFilaments = temp);  // Va récupérer la température maximum pour l'emplacement des filaments
   }
 
   public ngOnInit(): void {
@@ -62,6 +78,8 @@ export class PrintControlComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
+    this.enclosureService.updateEnclosureTemp(0); // Réinitialise la température désiré dans le boitier à 0 à la fermeture de cette fenêtre
+    this.enclosureService.updateStorageTemp(0); // Réinitialise la température désiré dans le boitier à 0 à la fermeture de cette fenêtre
     this.subscriptions.unsubscribe();
   }
 
@@ -223,6 +241,41 @@ export class PrintControlComponent implements OnInit, OnDestroy {
     }
   }
 
+  /*
+  * @brief Méthode qui change la température cible pour le boitier
+  * @param value: nombre additioné à la température cible actuelle
+  */
+  public changeTemperatureEnclosure(value: number): void {
+    if (this.showControls) {
+      this.enclosureTarget += value;  // Ajoute la valeur à la température cible
+      if (this.enclosureTarget < this.minTemperatureEnclosure) {  // Si elle est plus petite que son minimum
+        this.enclosureTarget = this.minTemperatureEnclosure;  // Met égale à son minimum
+      }
+      if (this.enclosureTarget > this.maxTemperatureEnclosure) {  // Si elle est plus grande que son maximum
+        this.enclosureTarget = this.maxTemperatureEnclosure;  // Met égale à son maximum
+      }
+    }
+  }
+
+  /*
+  * @brief Méthode qui change la température cible pour le boitier
+  * @param value: nombre additioné à la température cible actuelle
+  */
+  public changeTemperatureStorage(value: number): void {
+    if (this.showControls) {
+      this.storageTarget += value;  // Ajoute la valeur à la température cible
+      if (this.storageTarget < this.minTemperatureFilaments) {  // Si elle est plus petite que son minimum
+        this.storageTarget = this.minTemperatureFilaments;  // Met égale à son minimum
+      }
+      if (this.storageTarget > this.maxTemperatureFilaments) {  // Si elle est plus grande que son maximum
+        this.storageTarget = this.maxTemperatureFilaments;  // Met égale à son maximum
+      }
+    }
+  }
+
+  /*
+  * @brief Méthode appellé lorsque le bouton save est appuyé pour paramétré les nouvelles valeurs désirées
+  */
   public setAdjustParameters(event: MouseEvent): void {
     if (this.showControls) {
       this.printerService.setTemperatureHotend(this.temperatureHotend);
@@ -230,6 +283,10 @@ export class PrintControlComponent implements OnInit, OnDestroy {
       this.printerService.setFeedrate(this.feedrate);
       this.printerService.setFanSpeed(this.fanSpeed);
       this.hideControlOverlay(event);
+      this.enclosureService.updateEnclosureTemp(this.enclosureTarget);  // Indique que la température du boitier désirée à changé pour une nouvelle valeur
+      this.enclosureService.updateStorageTemp(this.storageTarget);  // Indique que la température de l'emplacement des filaments  désirée à changé pour une nouvelle valeur
+      this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(),this.enclosureTarget);  // Applique la nouvelle température désirée pour le boiter au controle de l'éléments chauffant
+      this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(),this.storageTarget);  // Applique la nouvelle température désirér pour l'emplacement des filaments au controle de l'éléments chauffant
     }
   }
 

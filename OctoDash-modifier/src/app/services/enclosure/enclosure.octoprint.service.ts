@@ -10,6 +10,7 @@ import {
   EnclosureOutputBody,
   EnclosurePluginAPI,
   EnclosurePWMBody,
+  EnclosureTemperature,
   OphomPlugStatus,
   PSUControlCommand,
   TasmotaCommand,
@@ -20,14 +21,17 @@ import { NotificationService } from '../../notification/notification.service';
 import { EnclosureService } from './enclosure.service';
 
 @Injectable()
-export class EnclosureOctoprintService implements EnclosureService {
+export class EnclosureOctoprintService extends EnclosureService {
   public constructor(
     private configService: ConfigService,
     private notificationService: NotificationService,
     private http: HttpClient,
-  ) {}
+  ) {
+    super()
+  }
   private currentPSUState = PSUState.ON;
 
+  // Definition de la méthode pour qu'il récupère les données du capteur de l'enceinte des filaments dans OctoPrint
   getEnclosureTemperature(): Observable<TemperatureReading> {
     return this.http
       .get(
@@ -46,6 +50,52 @@ export class EnclosureOctoprintService implements EnclosureService {
           } as TemperatureReading;
         }),
       );
+  }
+
+  // Definition de la méthode pour qu'il récupère les données du capteur de l'emplacement des filaments dans OctoPrint
+  getStorageTemperature(): Observable<TemperatureReading> {
+    return this.http
+      .get(
+        this.configService.getApiURL(
+          'plugin/enclosure/inputs/' + this.configService.getStorageTemperatureSensorName(),  // requête HTTP pour aller récupéré les données d'un capteur dans le plugin Enclosure dans OctoPrint
+          false,
+        ),
+        this.configService.getHTTPHeaders(),
+      )
+      .pipe(
+        map((data: EnclosurePluginAPI) => {
+          return {
+            temperature: data.temp_sensor_temp,
+            humidity: data.temp_sensor_humidity,
+            unit: data.use_fahrenheit ? '°F' : '°C',
+          } as TemperatureReading;
+        }),
+      );
+  }
+
+  // Definition de la méthode qui va donner une température cible à un élément chauffant dans le plugin Enclosure dans OctoPrint
+  public setTemperatureHeater(identifier: number, temperature: number): void {
+    const temperatureEnclosure: EnclosureTemperature = {  // Crée une constante de type EnclosureTemperature qui contient la température passé en paramètre
+      temperature,
+    };
+    this.http 
+      .patch(
+        this.configService.getApiURL('plugin/enclosure/temperature/' + identifier, false), // Requête HTTP pour aller insérer dans le plugin Enclosure la température cible à l'élément chauffant passé en paramètre
+        temperatureEnclosure,
+        this.configService.getHTTPHeaders(),
+      )
+      .pipe(
+        catchError(error => {
+          this.notificationService.setNotification({
+            heading: $localize`:@@error-set-color:Can't set Temperature target!`,
+            text: error.message,
+            type: NotificationType.ERROR,
+            time: new Date(),
+          });
+          return of(null);
+        }),
+      )
+      .subscribe();
   }
 
   public setLEDColor(identifier: number, red: number, green: number, blue: number): void {

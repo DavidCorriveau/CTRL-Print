@@ -31,8 +31,9 @@ export const defaultConfig: Config = {
       enabled: true,
     },
     enclosure: {
-      enabled: false,
-      ambientSensorID: null,
+      enabled: true,  // Active la lecture des capteurs par défaut
+      ambientSensorID: 1, // Met la valeur par défaut du capteur pour l'enceinte à 1
+      storageSensorID: 2,  // Met la valeur par défaut du capteur pour l'emplacement des filaments à 2
       filament1SensorID: null,
       filament2SensorID: null,
     },

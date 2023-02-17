@@ -167,6 +167,58 @@
           </div>
           <span class="print-control__adjust__name" i18n="@@adjust-speed">Speed</span>
         </td>
+
+        <td class="print-control__adjust__change-parameter">
+          <div class="print-control__adjust__controller">
+            <div
+              class="print-control__adjust__controller-increase"
+              (click)="changeTemperatureEnclosure(1)"
+              matRipple
+              [matRippleUnbounded]="false"
+            >
+              +
+            </div>
+            <div class="print-control__adjust__controller-value">
+              {{ enclosureTarget }}
+              <span class="print-control__adjust__controller-value-unit">°C</span>
+            </div>
+            <div
+              class="print-control__adjust__controller-decrease"
+              (click)="changeTemperatureEnclosure(-1)"
+              matRipple
+              [matRippleUnbounded]="false"
+            >
+              -
+            </div>
+          </div>
+          <span class="print-control__adjust__name" i18n="@@adjust-hotend">Enclosure</span>
+        </td>
+
+        <td class="print-control__adjust__change-parameter">
+          <div class="print-control__adjust__controller">
+            <div
+              class="print-control__adjust__controller-increase"
+              (click)="changeTemperatureStorage(1)"
+              matRipple
+              [matRippleUnbounded]="false"
+            >
+              +
+            </div>
+            <div class="print-control__adjust__controller-value">
+              {{ storageTarget }}
+              <span class="print-control__adjust__controller-value-unit">°C</span>
+            </div>
+            <div
+              class="print-control__adjust__controller-decrease"
+              (click)="changeTemperatureStorage(-1)"
+              matRipple
+              [matRippleUnbounded]="false"
+            >
+              -
+            </div>
+          </div>
+          <span class="print-control__adjust__name" i18n="@@adjust-hotend">Storage</span>
+        </td>
       </tr>
     </table>
     <div>
