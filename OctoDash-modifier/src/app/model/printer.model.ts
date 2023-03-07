@@ -5,7 +5,7 @@ export interface PrinterStatus {
   fanSpeed: number;
 }
 
-interface Temperature {
+export interface Temperature {
   current: number;
   set: number;
   unit: string;

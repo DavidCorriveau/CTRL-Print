@@ -6786,7 +6786,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
+ // Pour aller récupérer les informations de températures de l'enceinte
 
 
 
@@ -7207,12 +7207,11 @@ class PrintControlComponent {
         this.fanSpeed = 0;
         this.feedrate = 100;
         this.zOffset = 0;
-        this.enclosureService.enclosureTempDesire.subscribe(temp => this.enclosureTarget = temp);
-        this.enclosureService.storageTempDesire.subscribe(temp => this.storageTarget = temp);
-        this.enclosureService.minTempEnclosure.subscribe(temp => this.minTemperatureEnclosure = temp);
-        this.enclosureService.maxTempEnclosure.subscribe(temp => this.maxTemperatureEnclosure = temp);
-        this.enclosureService.minTempStorage.subscribe(temp => this.minTemperatureFilaments = temp);
-        this.enclosureService.maxTempStorage.subscribe(temp => this.maxTemperatureFilaments = temp);
+        this.enclosureService.storageTempDesire.subscribe(temp => this.storageTarget = temp); // Va récupérer la valeur paramétré pour l'emplacement des filaments
+        this.enclosureService.minTempEnclosure.subscribe(temp => this.minTemperatureEnclosure = temp); // Va récupérer la température minimum pour le boitier
+        this.enclosureService.maxTempEnclosure.subscribe(temp => this.maxTemperatureEnclosure = temp); // Va récupérer la température maximum pour le boitier
+        this.enclosureService.minTempStorage.subscribe(temp => this.minTemperatureFilaments = temp); // Va récupérer la température minimum pour l'emplacement des filaments
+        this.enclosureService.maxTempStorage.subscribe(temp => this.maxTemperatureFilaments = temp); // Va récupérer la température maximum pour l'emplacement des filaments
     }
     ngOnInit() {
         this.subscriptions.add(this.socketService.getPrinterStatusSubscribable().subscribe((printerStatus) => {
@@ -7232,8 +7231,8 @@ class PrintControlComponent {
         }));
     }
     ngOnDestroy() {
-        this.enclosureService.updateEnclosureTemp(0);
-        this.enclosureService.updateStorageTemp(0);
+        this.enclosureService.updateEnclosureTemp(0); // Réinitialise la température désiré dans le boitier à 0 à la fermeture de cette fenêtre
+        this.enclosureService.updateStorageTemp(0); // Réinitialise la température désiré dans le boitier à 0 à la fermeture de cette fenêtre
         this.subscriptions.unsubscribe();
     }
     isClickOnPreview(event) {
@@ -7374,28 +7373,39 @@ class PrintControlComponent {
             }
         }
     }
+    /*
+    * @brief Méthode qui change la température cible pour le boitier
+    * @param value: nombre additioné à la température cible actuelle
+    */
     changeTemperatureEnclosure(value) {
         if (this.showControls) {
-            this.enclosureTarget += value;
-            if (this.enclosureTarget < this.minTemperatureEnclosure) {
-                this.enclosureTarget = this.minTemperatureEnclosure;
+            this.enclosureTarget += value; // Ajoute la valeur à la température cible
+            if (this.enclosureTarget < this.minTemperatureEnclosure) { // Si elle est plus petite que son minimum
+                this.enclosureTarget = this.minTemperatureEnclosure; // Met égale à son minimum
             }
-            if (this.enclosureTarget > this.maxTemperatureEnclosure) {
-                this.enclosureTarget = this.maxTemperatureEnclosure;
+            if (this.enclosureTarget > this.maxTemperatureEnclosure) { // Si elle est plus grande que son maximum
+                this.enclosureTarget = this.maxTemperatureEnclosure; // Met égale à son maximum
             }
         }
     }
+    /*
+    * @brief Méthode qui change la température cible pour le boitier
+    * @param value: nombre additioné à la température cible actuelle
+    */
     changeTemperatureStorage(value) {
         if (this.showControls) {
-            this.storageTarget += value;
-            if (this.storageTarget < this.minTemperatureFilaments) {
-                this.storageTarget = this.minTemperatureFilaments;
+            this.storageTarget += value; // Ajoute la valeur à la température cible
+            if (this.storageTarget < this.minTemperatureFilaments) { // Si elle est plus petite que son minimum
+                this.storageTarget = this.minTemperatureFilaments; // Met égale à son minimum
             }
-            if (this.storageTarget > this.maxTemperatureFilaments) {
-                this.storageTarget = this.maxTemperatureFilaments;
+            if (this.storageTarget > this.maxTemperatureFilaments) { // Si elle est plus grande que son maximum
+                this.storageTarget = this.maxTemperatureFilaments; // Met égale à son maximum
             }
         }
     }
+    /*
+    * @brief Méthode appellé lorsque le bouton save est appuyé pour paramétré les nouvelles valeurs désirées
+    */
     setAdjustParameters(event) {
         if (this.showControls) {
             this.printerService.setTemperatureHotend(this.temperatureHotend);
@@ -7403,10 +7413,10 @@ class PrintControlComponent {
             this.printerService.setFeedrate(this.feedrate);
             this.printerService.setFanSpeed(this.fanSpeed);
             this.hideControlOverlay(event);
-            this.enclosureService.updateEnclosureTemp(this.enclosureTarget);
-            this.enclosureService.updateStorageTemp(this.storageTarget);
-            this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(), this.enclosureTarget);
-            this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(), this.storageTarget);
+            this.enclosureService.updateEnclosureTemp(this.enclosureTarget); // Indique que la température du boitier désirée à changé pour une nouvelle valeur
+            this.enclosureService.updateStorageTemp(this.storageTarget); // Indique que la température de l'emplacement des filaments  désirée à changé pour une nouvelle valeur
+            this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(), this.enclosureTarget); // Applique la nouvelle température désirée pour le boiter au controle de l'éléments chauffant
+            this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(), this.storageTarget); // Applique la nouvelle température désirér pour l'emplacement des filaments au controle de l'éléments chauffant
         }
     }
     getZOffset() {
@@ -7631,25 +7641,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "PrinterStatusComponent": () => (/* binding */ PrinterStatusComponent)
 /* harmony export */ });
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs */ 26078);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs */ 78947);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 26078);
 /* harmony import */ var _config_config_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../config/config.service */ 8696);
-/* harmony import */ var _model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../model */ 3256);
-/* harmony import */ var _services_printer_printer_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/printer/printer.service */ 28161);
-/* harmony import */ var _services_socket_socket_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/socket/socket.service */ 45266);
-/* harmony import */ var _services_enclosure_enclosure_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/enclosure/enclosure.service */ 34101);
-/* harmony import */ var _notification_notification_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../notification/notification.service */ 75769);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 3184);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common */ 36362);
-/* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/material/core */ 88133);
+/* harmony import */ var _services_printer_printer_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/printer/printer.service */ 28161);
+/* harmony import */ var _services_socket_socket_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/socket/socket.service */ 45266);
+/* harmony import */ var _services_enclosure_enclosure_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/enclosure/enclosure.service */ 34101);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 36362);
+/* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/material/core */ 88133);
 
 
 
 
-
-
-
-
+ // Pour récupérer et enregistrer les valeurs de température de l'enceinte et de l'emplacement des filaments. Aussi pour communiquer avec le plugin Enclosure
 
 
 
@@ -7658,321 +7662,318 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function PrinterStatusComponent_table_0_span_8_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "span", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" /", ctx_r2.printerStatus.tool0.set, "");
+    const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" /", ctx_r2.printerStatus.tool0.set, "");
 } }
 function PrinterStatusComponent_table_0_span_15_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "span", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "span", 19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "span", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" /", ctx_r3.printerStatus.bed.set, "");
+    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" /", ctx_r3.printerStatus.bed.set, "");
 } }
 function PrinterStatusComponent_table_0_span_28_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "span", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" /", ctx_r4.tempEnclosureDesire, "");
+    const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" /", ctx_r4.enclosureStatus.enclosure.temperature.set.valueOf(), "");
 } }
 function PrinterStatusComponent_table_0_span_35_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "span", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" /", ctx_r5.tempStorageDesire, "");
+    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" /", ctx_r5.enclosureStatus.storage.temperature.set, "");
 } }
 function PrinterStatusComponent_table_0_Template(rf, ctx) { if (rf & 1) {
-    const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "table", 2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](1, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "td", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_2_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r7); const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r6.showQuickControlHotend(); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](3, "img", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](4, "span", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](6, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](7, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](8, PrinterStatusComponent_table_0_span_8_Template, 4, 1, "span", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](9, "td", 8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_9_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r7); const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r8.showQuickControlHeatbed(); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](10, "img", 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](11, "span", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](13, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](14, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](15, PrinterStatusComponent_table_0_span_15_Template, 4, 1, "span", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](16, "td", 10);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_16_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r7); const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r9.showQuickControlFan(); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](17, "img", 11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](18, "span", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](20, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](21, "%");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](22, "td", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_22_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r7); const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r10.showQuickControlEnclosure(); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](23, "img", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](24, "span", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](26, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](27, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](28, PrinterStatusComponent_table_0_span_28_Template, 4, 1, "span", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](29, "td", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_29_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r7); const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r11.showQuickControlFilaments(); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](30, "img", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](31, "span", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](33, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](34, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](35, PrinterStatusComponent_table_0_span_35_Template, 4, 1, "span", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](36, "td", 16);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](37, "img", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](38, "span", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](39);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](40, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](41, "%");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "table", 2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "tr");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "td", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_2_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r7); const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r6.showQuickControlHotend(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](3, "img", 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "span", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](7, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](8, PrinterStatusComponent_table_0_span_8_Template, 4, 1, "span", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](9, "td", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_9_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r7); const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r8.showQuickControlHeatbed(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](10, "img", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](11, "span", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](13, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](14, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](15, PrinterStatusComponent_table_0_span_15_Template, 4, 1, "span", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](16, "td", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_16_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r7); const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r9.showQuickControlFan(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](17, "img", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](18, "span", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](20, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](21, "%");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](22, "td", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_22_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r7); const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r10.showQuickControlEnclosure(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](23, "img", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](24, "span", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](26, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](27, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](28, PrinterStatusComponent_table_0_span_28_Template, 4, 1, "span", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](29, "td", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_table_0_Template_td_click_29_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r7); const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r11.showQuickControlFilaments(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](30, "img", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](31, "span", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](33, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](34, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](35, PrinterStatusComponent_table_0_span_35_Template, 4, 1, "span", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](36, "td", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](37, "img", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](38, "span", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](39, " 8 ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](40, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](41, "%");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r0.printerStatus.tool0.current, "");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx_r0.printerStatus.tool0.set);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r0.printerStatus.bed.current, "");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx_r0.printerStatus.bed.set);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r0.printerStatus.fanSpeed >= 0 ? ctx_r0.printerStatus.fanSpeed : "-- ", "");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r0.enclosureTemperature.temperature, "");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx_r0.tempEnclosureDesire != 0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r0.storageTemperature.temperature, "");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx_r0.tempStorageDesire != 0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r0.storageTemperature.humidity, "");
+    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r0.printerStatus.tool0.current, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r0.printerStatus.tool0.set);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r0.printerStatus.bed.current, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r0.printerStatus.bed.set);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r0.printerStatus.fanSpeed >= 0 ? ctx_r0.printerStatus.fanSpeed : "-- ", "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r0.enclosureStatus.enclosure.temperature.current, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r0.enclosureStatus.enclosure.temperature.set);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r0.enclosureStatus.storage.temperature.current, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r0.enclosureStatus.storage.temperature.set);
 } }
 function PrinterStatusComponent_div_1_div_14_Template(rf, ctx) { if (rf & 1) {
-    const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_14_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r18); const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2); return ctx_r17.quickControlChangeValue(-1000); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "span", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_14_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r18); const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r17.quickControlChangeValue(-1000); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "span", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r12.hotendTarget, "");
+    const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r12.hotendTarget, "");
 } }
 function PrinterStatusComponent_div_1_div_15_Template(rf, ctx) { if (rf & 1) {
-    const _r20 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_15_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r20); const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2); return ctx_r19.quickControlChangeValue(-1000); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "span", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    const _r20 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_15_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r20); const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r19.quickControlChangeValue(-1000); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "span", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r13.heatbedTarget, "");
+    const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r13.heatbedTarget, "");
 } }
 function PrinterStatusComponent_div_1_div_16_Template(rf, ctx) { if (rf & 1) {
-    const _r22 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_16_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r22); const ctx_r21 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2); return ctx_r21.quickControlChangeValue(-1000); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "span", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3, "%");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    const _r22 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_16_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r22); const ctx_r21 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r21.quickControlChangeValue(-1000); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "span", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "%");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r14.fanTarget, " ");
+    const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r14.fanTarget, " ");
 } }
 function PrinterStatusComponent_div_1_div_17_Template(rf, ctx) { if (rf & 1) {
-    const _r24 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_17_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r24); const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2); return ctx_r23.quickControlChangeValue(-1000); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "span", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    const _r24 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_17_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r24); const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r23.quickControlChangeValue(-1000); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "span", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r15.enclosureTarget, "");
+    const ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r15.enclosureTarget, "");
 } }
 function PrinterStatusComponent_div_1_div_18_Template(rf, ctx) { if (rf & 1) {
-    const _r26 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_18_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r26); const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2); return ctx_r25.quickControlChangeValue(-1000); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "span", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](3, "\u00B0C");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    const _r26 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_div_18_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r26); const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r25.quickControlChangeValue(-1000); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "span", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "\u00B0C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r16 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r16.storageTarget, "");
+    const ctx_r16 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r16.storageTarget, "");
 } }
 function PrinterStatusComponent_div_1_Template(rf, ctx) { if (rf & 1) {
-    const _r28 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r28); const ctx_r27 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r27.hideQuickControl(); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](1, "table", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](2, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](3, "td", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](4, "img", 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](5, "td", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](6, "img", 25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](7, "td", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](8, "div", 27);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_8_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r28); const ctx_r29 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r29.stopPropagation($event); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](9, "div", 28);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](10, "div", 29);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_10_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r28); const ctx_r30 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r30.quickControlChangeValue(1); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](11, " +1 ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](12, "div", 29);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_12_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r28); const ctx_r31 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r31.quickControlChangeValue(10); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](13, " +10 ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](14, PrinterStatusComponent_div_1_div_14_Template, 4, 2, "div", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](15, PrinterStatusComponent_div_1_div_15_Template, 4, 2, "div", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](16, PrinterStatusComponent_div_1_div_16_Template, 4, 2, "div", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](17, PrinterStatusComponent_div_1_div_17_Template, 4, 2, "div", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](18, PrinterStatusComponent_div_1_div_18_Template, 4, 2, "div", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](19, "div", 28);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](20, "div", 31);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_20_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r28); const ctx_r32 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r32.quickControlChangeValue(-1); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](21, " -1 ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](22, "div", 31);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_22_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r28); const ctx_r33 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r33.quickControlChangeValue(-10); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](23, " -10 ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](24, "div", 28);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](25, "div", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_25_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r28); const ctx_r34 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](); return ctx_r34.quickControlSetValue(); });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](26, "span", 33);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](27, "set");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    const _r28 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r28); const ctx_r27 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r27.hideQuickControl(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "table", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](2, "tr");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "td", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](4, "img", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "td", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](6, "img", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](7, "td", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](8, "div", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_8_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r28); const ctx_r29 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r29.stopPropagation($event); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](9, "div", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "div", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_10_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r28); const ctx_r30 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r30.quickControlChangeValue(1); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](11, " +1 ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](12, "div", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_12_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r28); const ctx_r31 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r31.quickControlChangeValue(10); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](13, " +10 ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](14, PrinterStatusComponent_div_1_div_14_Template, 4, 2, "div", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](15, PrinterStatusComponent_div_1_div_15_Template, 4, 2, "div", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](16, PrinterStatusComponent_div_1_div_16_Template, 4, 2, "div", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](17, PrinterStatusComponent_div_1_div_17_Template, 4, 2, "div", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](18, PrinterStatusComponent_div_1_div_18_Template, 4, 2, "div", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](19, "div", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](20, "div", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_20_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r28); const ctx_r32 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r32.quickControlChangeValue(-1); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](21, " -1 ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](22, "div", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_22_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r28); const ctx_r33 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r33.quickControlChangeValue(-10); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](23, " -10 ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](24, "div", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](25, "div", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function PrinterStatusComponent_div_1_Template_div_click_25_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r28); const ctx_r34 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](); return ctx_r34.quickControlSetValue(); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](26, "span", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](27, "set");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("src", "assets/" + (ctx_r1.view === ctx_r1.QuickControlView.HOTEND ? "nozzle.svg" : ctx_r1.view === ctx_r1.QuickControlView.HEATBED ? "heat-bed.svg" : ctx_r1.view === ctx_r1.QuickControlView.ENCLOSURE ? "enclosure.svg" : ctx_r1.view === ctx_r1.QuickControlView.FILAMENTS ? "filaments_3D.svg" : "fan.svg"), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵsanitizeUrl"]);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.HOTEND);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.HEATBED);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.FAN);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.ENCLOSURE);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.FILAMENTS);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("matRippleUnbounded", false);
+    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("src", "assets/" + (ctx_r1.view === ctx_r1.QuickControlView.HOTEND ? "nozzle.svg" : ctx_r1.view === ctx_r1.QuickControlView.HEATBED ? "heat-bed.svg" : ctx_r1.view === ctx_r1.QuickControlView.ENCLOSURE ? "enclosure.svg" : ctx_r1.view === ctx_r1.QuickControlView.FILAMENTS ? "filaments_3D.svg" : "fan.svg"), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.HOTEND);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.HEATBED);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.FAN);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.ENCLOSURE);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx_r1.view === ctx_r1.QuickControlView.FILAMENTS);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRippleUnbounded", false);
 } }
 class PrinterStatusComponent {
-    constructor(printerService, configService, socketService, enclosureService, notificationService) {
+    constructor(printerService, configService, socketService, enclosureService) {
         this.printerService = printerService;
         this.configService = configService;
         this.socketService = socketService;
         this.enclosureService = enclosureService;
-        this.notificationService = notificationService;
-        this.subscriptions = new rxjs__WEBPACK_IMPORTED_MODULE_7__.Subscription();
+        this.subscriptions = new rxjs__WEBPACK_IMPORTED_MODULE_5__.Subscription();
         this.QuickControlView = QuickControlView;
         this.view = QuickControlView.NONE;
-        this.idealTemperatureFilaments = 50;
-        this.idealTemperatureEnclosure = 25;
+        this.idealTemperatureFilaments = 50; // Température idéal pour l'emplacement des filaments
+        this.idealTemperatureEnclosure = 25; // Température idéal pour l'enceinte
         this.valeurChangePourDefaut = -999; // Valeur pour changer entre le minimum et le maximum
         this.tempStorageDesire = 0; // Température appliqué par l'utilisateur 
         this.tempEnclosureDesire = 0; // Température appliqué par l'utilisateur 
@@ -7982,49 +7983,18 @@ class PrinterStatusComponent {
         this.hotendTarget = this.configService.getDefaultHotendTemperature();
         this.heatbedTarget = this.configService.getDefaultHeatbedTemperature();
         this.fanTarget = this.configService.getDefaultFanSpeed();
-        if (this.configService.getStorageTemperatureSensorName() !== null) {
-            this.subscriptions.add(// Ajoute une sorte de thread a mon avis
-            (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.timer)(0, 1000).subscribe(() => {
-                this.enclosureService.getStorageTemperature().subscribe({
-                    next: (temperatureReading) => (this.storageTemperature = temperatureReading),
-                    error: (error) => {
-                        this.notificationService.setNotification({
-                            heading: $localize `:@@error-enclosure-temp:Can't retrieve enclosure temperature!`,
-                            text: error.message,
-                            type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
-                            time: new Date(),
-                        });
-                    },
-                });
-            }));
-        }
-        if (this.configService.getAmbientTemperatureSensorName() !== null) {
-            this.subscriptions.add(// Ajoute une sorte de thread a mon avis
-            (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.timer)(0, 1000).subscribe(() => {
-                this.enclosureService.getEnclosureTemperature().subscribe({
-                    next: (temperatureReading) => (this.enclosureTemperature = temperatureReading),
-                    error: (error) => {
-                        this.notificationService.setNotification({
-                            heading: $localize `:@@error-enclosure-temp:Can't retrieve enclosure temperature!`,
-                            text: error.message,
-                            type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
-                            time: new Date(),
-                        });
-                    },
-                });
-            }));
-        }
-        this.enclosureService.enclosureTempDesire.subscribe(temp => this.tempEnclosureDesire = temp);
-        this.enclosureService.storageTempDesire.subscribe(temp => this.tempStorageDesire = temp);
-        this.enclosureService.minTempEnclosure.subscribe(temp => this.minTemperatureEnclosure = temp);
-        this.enclosureService.maxTempEnclosure.subscribe(temp => this.maxTemperatureEnclosure = temp);
-        this.enclosureService.minTempStorage.subscribe(temp => this.minTemperatureFilaments = temp);
-        this.enclosureService.maxTempStorage.subscribe(temp => this.maxTemperatureFilaments = temp);
+        this.enclosureTarget = this.tempEnclosureDesire;
+        this.storageTarget = this.tempStorageDesire;
+        this.enclosureService.minTempEnclosure.subscribe(temp => this.minTemperatureEnclosure = temp); // Va récupérer la température minimum pour le boitier
+        this.enclosureService.maxTempEnclosure.subscribe(temp => this.maxTemperatureEnclosure = temp); // Va récupérer la température maximum pour le boitier
+        this.enclosureService.minTempStorage.subscribe(temp => this.minTemperatureFilaments = temp); // Va récupérer la température minimum pour l'emplacement des filaments
+        this.enclosureService.maxTempStorage.subscribe(temp => this.maxTemperatureFilaments = temp); // Va récupérer la température maximum pour l'emplacement des filaments
     }
     ngOnInit() {
         this.subscriptions.add(this.socketService.getPrinterStatusSubscribable().subscribe((status) => {
             this.printerStatus = status;
         }));
+        this.subscriptions.add(this.enclosureService.getEnclosureStatusSubscribable().subscribe(status => { this.enclosureStatus = status; }));
     }
     ngOnDestroy() {
         this.subscriptions.unsubscribe();
@@ -8046,16 +8016,16 @@ class PrinterStatusComponent {
      * @param: aucun
      */
     showQuickControlEnclosure() {
-        this.view = QuickControlView.ENCLOSURE;
-        this.showQuickControl();
+        this.view = QuickControlView.ENCLOSURE; // Règle l'affichage pour celui de l'enceinte
+        this.showQuickControl(); // Affiche le menu de paramétrage
     }
     /*
      * @brief: Méthode qui fait aparaitre le menu de contrôle pour la température de l'emplacement des filaments
      * @aucun: aucun
      */
     showQuickControlFilaments() {
-        this.view = QuickControlView.FILAMENTS;
-        this.showQuickControl();
+        this.view = QuickControlView.FILAMENTS; // Règle l'affichage pour celui de l'espace des filaments
+        this.showQuickControl(); // Affiche le menu de paramétrage
     }
     showQuickControl() {
         setTimeout(() => {
@@ -8204,29 +8174,29 @@ class PrinterStatusComponent {
      * @param: aucun
      */
     setTemperatureEnclosure() {
-        this.enclosureService.updateEnclosureTemp(this.enclosureTarget);
-        this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(), this.enclosureTarget);
-        this.hideQuickControl();
+        //this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(), this.enclosureTarget);
+        this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(), this.enclosureTarget); // Envoie la température de l'enceinte souhaité au plugin Enclosure pour qu'il agit avec l'élément chauffant
+        this.hideQuickControl(); // Ferme l'affichage de paramétrage de la température
     }
     /*
      * @brief: Méthode qui met la température appliquée de l'emplacement des filaments égale à celle cible
      * @param: aucun
      */
     setTemperatureFilaments() {
-        this.enclosureService.updateStorageTemp(this.storageTarget);
-        this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(), this.storageTarget);
-        this.hideQuickControl();
+        //this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(), this.storageTarget);
+        this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(), this.storageTarget); // Envoie la température de l'emplacement des filament souhaité au plugin Enclosure pour qu'il agit avec l'élément chauffant
+        this.hideQuickControl(); // Ferme l'affichage de paramétrage de la température
     }
 }
-PrinterStatusComponent.ɵfac = function PrinterStatusComponent_Factory(t) { return new (t || PrinterStatusComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_services_printer_printer_service__WEBPACK_IMPORTED_MODULE_2__.PrinterService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_config_config_service__WEBPACK_IMPORTED_MODULE_0__.ConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_services_socket_socket_service__WEBPACK_IMPORTED_MODULE_3__.SocketService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_services_enclosure_enclosure_service__WEBPACK_IMPORTED_MODULE_4__.EnclosureService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_notification_notification_service__WEBPACK_IMPORTED_MODULE_5__.NotificationService)); };
-PrinterStatusComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineComponent"]({ type: PrinterStatusComponent, selectors: [["app-printer-status"]], decls: 2, vars: 2, consts: [["class", "printer-status", 4, "ngIf"], ["class", "quick-control", "id", "quickControl", 3, "click", 4, "ngIf"], [1, "printer-status"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-1", 3, "matRippleUnbounded", "click"], ["src", "assets/nozzle.svg"], [1, "printer-status__actual-value"], [1, "printer-status__unit"], ["class", "printer-status__set-value", 4, "ngIf"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-2", 3, "matRippleUnbounded", "click"], ["src", "assets/heat-bed.svg"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-3", "printer-status__no-set-value", 3, "matRippleUnbounded", "click"], ["src", "assets/fan.svg"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-4", 3, "matRippleUnbounded", "click"], ["src", "assets/enclosure.svg"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-5", 3, "matRippleUnbounded", "click"], ["src", "assets/filaments_3D.svg"], [1, "printer-status__value", "printer-status__value-5"], ["src", "assets/humidity.svg"], [1, "printer-status__set-value"], [1, "unit"], ["id", "quickControl", 1, "quick-control", 3, "click"], [1, "top-bar"], [1, "top-bar__back"], ["src", "assets/back.svg", "matRipple", "", 1, "top-bar__back-icon", 3, "matRippleUnbounded"], [1, "top-bar__center"], [1, "top-bar__center-icon", 3, "src"], [1, "top-bar__next"], [1, "quick-control__controller", 3, "click"], [1, "quick-control__controller-row"], ["matRipple", "", 1, "quick-control__controller-increase", 3, "matRippleUnbounded", "click"], ["class", "quick-control__controller-value", "colspan", "2", "matRipple", "", 3, "matRippleUnbounded", "click", 4, "ngIf"], ["matRipple", "", 1, "quick-control__controller-decrease", 3, "matRippleUnbounded", "click"], ["colspan", "2", "matRipple", "", 1, "quick-control__controller-set", 3, "matRippleUnbounded", "click"], [1, "quick-control__controller-set-span"], ["colspan", "2", "matRipple", "", 1, "quick-control__controller-value", 3, "matRippleUnbounded", "click"], [1, "quick-control__controller-value-unit"]], template: function PrinterStatusComponent_Template(rf, ctx) { if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](0, PrinterStatusComponent_table_0_Template, 42, 15, "table", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](1, PrinterStatusComponent_div_1_Template, 28, 12, "div", 1);
+PrinterStatusComponent.ɵfac = function PrinterStatusComponent_Factory(t) { return new (t || PrinterStatusComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_services_printer_printer_service__WEBPACK_IMPORTED_MODULE_1__.PrinterService), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_config_config_service__WEBPACK_IMPORTED_MODULE_0__.ConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_services_socket_socket_service__WEBPACK_IMPORTED_MODULE_2__.SocketService), _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_services_enclosure_enclosure_service__WEBPACK_IMPORTED_MODULE_3__.EnclosureService)); };
+PrinterStatusComponent.ɵcmp = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: PrinterStatusComponent, selectors: [["app-printer-status"]], decls: 2, vars: 2, consts: [["class", "printer-status", 4, "ngIf"], ["class", "quick-control", "id", "quickControl", 3, "click", 4, "ngIf"], [1, "printer-status"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-1", 3, "matRippleUnbounded", "click"], ["src", "assets/nozzle.svg"], [1, "printer-status__actual-value"], [1, "printer-status__unit"], ["class", "printer-status__set-value", 4, "ngIf"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-2", 3, "matRippleUnbounded", "click"], ["src", "assets/heat-bed.svg"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-3", "printer-status__no-set-value", 3, "matRippleUnbounded", "click"], ["src", "assets/fan.svg"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-4", 3, "matRippleUnbounded", "click"], ["src", "assets/enclosure.svg"], ["matRipple", "", 1, "printer-status__value", "printer-status__value-5", 3, "matRippleUnbounded", "click"], ["src", "assets/filaments_3D.svg"], [1, "printer-status__value", "printer-status__value-5"], ["src", "assets/humidity.svg"], [1, "printer-status__set-value"], [1, "unit"], ["id", "quickControl", 1, "quick-control", 3, "click"], [1, "top-bar"], [1, "top-bar__back"], ["src", "assets/back.svg", "matRipple", "", 1, "top-bar__back-icon", 3, "matRippleUnbounded"], [1, "top-bar__center"], [1, "top-bar__center-icon", 3, "src"], [1, "top-bar__next"], [1, "quick-control__controller", 3, "click"], [1, "quick-control__controller-row"], ["matRipple", "", 1, "quick-control__controller-increase", 3, "matRippleUnbounded", "click"], ["class", "quick-control__controller-value", "colspan", "2", "matRipple", "", 3, "matRippleUnbounded", "click", 4, "ngIf"], ["matRipple", "", 1, "quick-control__controller-decrease", 3, "matRippleUnbounded", "click"], ["colspan", "2", "matRipple", "", 1, "quick-control__controller-set", 3, "matRippleUnbounded", "click"], [1, "quick-control__controller-set-span"], ["colspan", "2", "matRipple", "", 1, "quick-control__controller-value", 3, "matRippleUnbounded", "click"], [1, "quick-control__controller-value-unit"]], template: function PrinterStatusComponent_Template(rf, ctx) { if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](0, PrinterStatusComponent_table_0_Template, 42, 14, "table", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, PrinterStatusComponent_div_1_Template, 28, 12, "div", 1);
     } if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx.printerStatus);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", ctx.view !== ctx.QuickControlView.NONE);
-    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_9__.NgIf, _angular_material_core__WEBPACK_IMPORTED_MODULE_10__.MatRipple], styles: [".printer-status[_ngcontent-%COMP%] {\n  table-layout: fixed;\n  width: 100%;\n  height: 40vh;\n  display: inline-block;\n  overflow: hidden;\n  margin-left: 6vh;\n}\n.printer-status__value[_ngcontent-%COMP%] {\n  text-align: center;\n  vertical-align: top;\n}\n.printer-status__value[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  padding-left: 2.75vw;\n  padding-right: 2.75vw;\n  padding-top: 4vh;\n  width: 9vw;\n}\n.printer-status__value-1[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-2[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-3[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-4[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-5[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-6[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__unit[_ngcontent-%COMP%] {\n  font-size: 90%;\n}\n.printer-status__actual-value[_ngcontent-%COMP%] {\n  font-size: 90%;\n  font-weight: 500;\n}\n.printer-status__set-value[_ngcontent-%COMP%] {\n  font-size: 90%;\n}\n.quick-control[_ngcontent-%COMP%] {\n  position: fixed;\n  left: 0;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(0, 0, 0, 0.85);\n  transition: opacity 0.4s ease-in-out;\n  z-index: 10;\n  opacity: 0;\n}\n.quick-control__controller[_ngcontent-%COMP%] {\n  width: 35vw;\n  margin: 0 auto;\n  border: solid 0.6vw;\n  border-radius: 3vw;\n  margin-top: 1.5vh;\n}\n.quick-control__controller-row[_ngcontent-%COMP%] {\n  display: flex;\n}\n.quick-control__controller-value[_ngcontent-%COMP%] {\n  padding: 3vh 6vw;\n  font-size: 8vw;\n  font-weight: 500;\n  text-align: center;\n}\n.quick-control__controller-value-unit[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 4vw;\n  font-weight: 400;\n}\n.quick-control__controller-increase[_ngcontent-%COMP%] {\n  padding: 3vh 6vw;\n  font-weight: 500;\n  flex: 1;\n}\n.quick-control__controller-decrease[_ngcontent-%COMP%] {\n  padding: 3vh 6vw;\n  font-weight: 500;\n  flex: 1;\n}\n.quick-control__controller-set[_ngcontent-%COMP%] {\n  height: 10vw;\n  border-top: solid 0.6vw;\n  flex: 1;\n  align-items: center;\n  display: flex;\n}\n.quick-control__controller-set-span[_ngcontent-%COMP%] {\n  text-align: center;\n  flex: 1;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInByaW50ZXItc3RhdHVzLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUNBO0VBQ0UsbUJBQUE7RUFDQSxXQUFBO0VBQ0EsWUFBQTtFQUNBLHFCQUFBO0VBQ0EsZ0JBQUE7RUFDQSxnQkFBQTtBQUFGO0FBRUU7RUFDRSxrQkFBQTtFQUNBLG1CQUFBO0FBQUo7QUFHSTtFQUNFLG9CQUFBO0VBQ0EscUJBQUE7RUFDQSxnQkFBQTtFQUNBLFVBQUE7QUFETjtBQUtJO0VBQ0UsYUFBQTtBQUhOO0FBTUk7RUFDRSxhQUFBO0FBSk47QUFPSTtFQUNFLGFBQUE7QUFMTjtBQVFJO0VBQ0UsYUFBQTtBQU5OO0FBU0k7RUFDRSxhQUFBO0FBUE47QUFVSTtFQUNFLGFBQUE7QUFSTjtBQVlFO0VBQ0UsY0FBQTtBQVZKO0FBYUU7RUFDRSxjQUFBO0VBQ0EsZ0JBQUE7QUFYSjtBQWNFO0VBQ0UsY0FBQTtBQVpKO0FBZ0JBO0VBQ0UsZUFBQTtFQUNBLE9BQUE7RUFDQSxNQUFBO0VBQ0EsUUFBQTtFQUNBLFNBQUE7RUFDQSxxQ0FBQTtFQUNBLG9DQUFBO0VBQ0EsV0FBQTtFQUNBLFVBQUE7QUFiRjtBQWVFO0VBQ0UsV0FBQTtFQUNBLGNBQUE7RUFDQSxtQkFBQTtFQUNBLGtCQUFBO0VBQ0EsaUJBQUE7QUFiSjtBQWVJO0VBQ0UsYUFBQTtBQWJOO0FBZ0JJO0VBQ0UsZ0JBQUE7RUFDQSxjQUFBO0VBQ0EsZ0JBQUE7RUFDQSxrQkFBQTtBQWROO0FBZ0JNO0VBQ0Usa0JBQUE7RUFDQSxjQUFBO0VBQ0EsZ0JBQUE7QUFkUjtBQWtCSTtFQUNFLGdCQUFBO0VBQ0EsZ0JBQUE7RUFDQSxPQUFBO0FBaEJOO0FBbUJJO0VBQ0UsZ0JBQUE7RUFDQSxnQkFBQTtFQUNBLE9BQUE7QUFqQk47QUFvQkk7RUFDRSxZQUFBO0VBQ0EsdUJBQUE7RUFDQSxPQUFBO0VBQ0EsbUJBQUE7RUFDQSxhQUFBO0FBbEJOO0FBb0JNO0VBQ0Usa0JBQUE7RUFDQSxPQUFBO0FBbEJSIiwiZmlsZSI6InByaW50ZXItc3RhdHVzLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLy8gUHJvcHJpw6l0w6lzIGR1IHRhYmxlYXVcclxuLnByaW50ZXItc3RhdHVzIHtcclxuICB0YWJsZS1sYXlvdXQ6IGZpeGVkO1xyXG4gIHdpZHRoOiAxMDAlO1xyXG4gIGhlaWdodDogNDB2aDtcclxuICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcclxuICBtYXJnaW4tbGVmdDogNnZoO1xyXG5cclxuICAmX192YWx1ZSB7IFxyXG4gICAgdGV4dC1hbGlnbjogY2VudGVyOyAvLyBDZW50cmUgdG91cyBsZXMgdGV4dGVzIHByw6lzZW50cyBkYW5zIHRvdXRlcyBsZXMgY2FzZXMgZHUgdGFibGVhdVxyXG4gICAgdmVydGljYWwtYWxpZ246IHRvcDsgIC8vIEFsaWduZSB0b3VzIGxlcyBvYmpldHMgdmVycyBsZSBoYXV0IGRhbnMgdG91dGVzIGxlcyBjYXNlcyBkdSB0YWJsZWF1XHJcblxyXG4gICAgLy8gRGltZW5zaW9ubmUgdG91dGVzIGxlcyBpbWFnZXMgZHUgdGFibGVhdVxyXG4gICAgJiBpbWcge1xyXG4gICAgICBwYWRkaW5nLWxlZnQ6IDIuNzV2dztcclxuICAgICAgcGFkZGluZy1yaWdodDogMi43NXZ3O1xyXG4gICAgICBwYWRkaW5nLXRvcDogNHZoO1xyXG4gICAgICB3aWR0aDogOXZ3O1xyXG4gICAgfVxyXG5cclxuICAgIFxyXG4gICAgJi0xIHtcclxuICAgICAgd2lkdGg6IDE1LjV2dzsgIC8vIEFwbGlxdWUgdW5lIGxvbmd1ZXVyIMOgIGxhIGNhc2UgMVxyXG4gICAgfVxyXG4gICAgXHJcbiAgICAmLTIge1xyXG4gICAgICB3aWR0aDogMTUuNXZ3OyAgLy8gQXBsaXF1ZSB1bmUgbG9uZ3VldXIgw6AgbGEgY2FzZSAyXHJcbiAgICB9XHJcbiAgICBcclxuICAgICYtMyB7XHJcbiAgICAgIHdpZHRoOiAxNS41dnc7ICAvLyBBcGxpcXVlIHVuZSBsb25ndWV1ciDDoCBsYSBjYXNlIDNcclxuICAgIH1cclxuICAgIFxyXG4gICAgJi00IHtcclxuICAgICAgd2lkdGg6IDE1LjV2dzsgIC8vIEFwbGlxdWUgdW5lIGxvbmd1ZXVyIMOgIGxhIGNhc2UgNFxyXG4gICAgfVxyXG4gICAgXHJcbiAgICAmLTUge1xyXG4gICAgICB3aWR0aDogMTUuNXZ3OyAgLy8gQXBsaXF1ZSB1bmUgbG9uZ3VldXIgw6AgbGEgY2FzZSA1XHJcbiAgICB9XHJcbiAgICBcclxuICAgICYtNiB7XHJcbiAgICAgIHdpZHRoOiAxNS41dnc7ICAvLyBBcGxpcXVlIHVuZSBsb25ndWV1ciDDoCBsYSBjYXNlIDZcclxuICAgIH1cclxuICB9XHJcbiAgXHJcbiAgJl9fdW5pdCB7XHJcbiAgICBmb250LXNpemU6IDkwJTsgLy8gQXBwbGlxdWUgdW5lIGdyb3NzZXVyIGRlcyBjYXJhY3TDqHJlcyBwb3VyIGxlcyB1bml0w6lzXHJcbiAgfVxyXG4gIFxyXG4gICZfX2FjdHVhbC12YWx1ZSB7XHJcbiAgICBmb250LXNpemU6IDkwJTsgLy8gQXBwbGlxdWUgdW5lIGdyb3NzZXVyIGRlcyBjYXJhY3TDqHJlcyBwb3VyIGxlcyB2YWxldXJzIG1lc3Vyw6lzIHBhciBsZXMgY2FwdGV1cnNcclxuICAgIGZvbnQtd2VpZ2h0OiA1MDA7IC8vIE1ldCBsZXMgY2FyYWN0w6hyZXMgZW4gZ3Jhc1xyXG4gIH1cclxuXHJcbiAgJl9fc2V0LXZhbHVlIHtcclxuICAgIGZvbnQtc2l6ZTogOTAlOyAvLyBBcHBsaXF1ZSB1bmUgZ3Jvc3NldXIgZGVzIGNhcmFjdMOocmVzIHBvdXIgbGVzIHZhbGV1ciBhcHBsaXF1w6llc1xyXG4gIH1cclxufVxyXG5cclxuLnF1aWNrLWNvbnRyb2wge1xyXG4gIHBvc2l0aW9uOiBmaXhlZDtcclxuICBsZWZ0OiAwO1xyXG4gIHRvcDogMDtcclxuICByaWdodDogMDtcclxuICBib3R0b206IDA7XHJcbiAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSgwLCAwLCAwLCAwLjg1KTtcclxuICB0cmFuc2l0aW9uOiBvcGFjaXR5IDAuNHMgZWFzZS1pbi1vdXQ7XHJcbiAgei1pbmRleDogMTA7XHJcbiAgb3BhY2l0eTogMDtcclxuXHJcbiAgJl9fY29udHJvbGxlciB7XHJcbiAgICB3aWR0aDogMzV2dztcclxuICAgIG1hcmdpbjogMCBhdXRvO1xyXG4gICAgYm9yZGVyOiBzb2xpZCAwLjZ2dztcclxuICAgIGJvcmRlci1yYWRpdXM6IDN2dztcclxuICAgIG1hcmdpbi10b3A6IDEuNXZoO1xyXG5cclxuICAgICYtcm93IHtcclxuICAgICAgZGlzcGxheTogZmxleDtcclxuICAgIH1cclxuXHJcbiAgICAmLXZhbHVlIHtcclxuICAgICAgcGFkZGluZzogM3ZoIDZ2dztcclxuICAgICAgZm9udC1zaXplOiA4dnc7XHJcbiAgICAgIGZvbnQtd2VpZ2h0OiA1MDA7XHJcbiAgICAgIHRleHQtYWxpZ246IGNlbnRlcjtcclxuXHJcbiAgICAgICYtdW5pdCB7XHJcbiAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gICAgICAgIGZvbnQtc2l6ZTogNHZ3O1xyXG4gICAgICAgIGZvbnQtd2VpZ2h0OiA0MDA7XHJcbiAgICAgIH1cclxuICAgIH1cclxuXHJcbiAgICAmLWluY3JlYXNlIHtcclxuICAgICAgcGFkZGluZzogM3ZoIDZ2dztcclxuICAgICAgZm9udC13ZWlnaHQ6IDUwMDtcclxuICAgICAgZmxleDogMTtcclxuICAgIH1cclxuXHJcbiAgICAmLWRlY3JlYXNlIHtcclxuICAgICAgcGFkZGluZzogM3ZoIDZ2dztcclxuICAgICAgZm9udC13ZWlnaHQ6IDUwMDtcclxuICAgICAgZmxleDogMTtcclxuICAgIH1cclxuXHJcbiAgICAmLXNldCB7XHJcbiAgICAgIGhlaWdodDogMTB2dztcclxuICAgICAgYm9yZGVyLXRvcDogc29saWQgMC42dnc7XHJcbiAgICAgIGZsZXg6IDE7XHJcbiAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbiAgICAgIGRpc3BsYXk6IGZsZXg7XHJcblxyXG4gICAgICAmLXNwYW4ge1xyXG4gICAgICAgIHRleHQtYWxpZ246IGNlbnRlcjtcclxuICAgICAgICBmbGV4OiAxO1xyXG4gICAgICB9XHJcbiAgICB9XHJcbiAgfVxyXG59Il19 */"] });
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.printerStatus);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.view !== ctx.QuickControlView.NONE);
+    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.NgIf, _angular_material_core__WEBPACK_IMPORTED_MODULE_7__.MatRipple], styles: [".printer-status[_ngcontent-%COMP%] {\n  table-layout: fixed;\n  width: 100%;\n  height: 40vh;\n  display: inline-block;\n  overflow: hidden;\n  margin-left: 6vh;\n}\n.printer-status__value[_ngcontent-%COMP%] {\n  text-align: center;\n  vertical-align: top;\n}\n.printer-status__value[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  padding-left: 2.75vw;\n  padding-right: 2.75vw;\n  padding-top: 4vh;\n  width: 9vw;\n}\n.printer-status__value-1[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-2[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-3[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-4[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-5[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__value-6[_ngcontent-%COMP%] {\n  width: 15.5vw;\n}\n.printer-status__unit[_ngcontent-%COMP%] {\n  font-size: 90%;\n}\n.printer-status__actual-value[_ngcontent-%COMP%] {\n  font-size: 90%;\n  font-weight: 500;\n}\n.printer-status__set-value[_ngcontent-%COMP%] {\n  font-size: 90%;\n}\n.quick-control[_ngcontent-%COMP%] {\n  position: fixed;\n  left: 0;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  background-color: rgba(0, 0, 0, 0.85);\n  transition: opacity 0.4s ease-in-out;\n  z-index: 10;\n  opacity: 0;\n}\n.quick-control__controller[_ngcontent-%COMP%] {\n  width: 35vw;\n  margin: 0 auto;\n  border: solid 0.6vw;\n  border-radius: 3vw;\n  margin-top: 1.5vh;\n}\n.quick-control__controller-row[_ngcontent-%COMP%] {\n  display: flex;\n}\n.quick-control__controller-value[_ngcontent-%COMP%] {\n  padding: 3vh 6vw;\n  font-size: 8vw;\n  font-weight: 500;\n  text-align: center;\n}\n.quick-control__controller-value-unit[_ngcontent-%COMP%] {\n  text-align: center;\n  font-size: 4vw;\n  font-weight: 400;\n}\n.quick-control__controller-increase[_ngcontent-%COMP%] {\n  padding: 3vh 6vw;\n  font-weight: 500;\n  flex: 1;\n}\n.quick-control__controller-decrease[_ngcontent-%COMP%] {\n  padding: 3vh 6vw;\n  font-weight: 500;\n  flex: 1;\n}\n.quick-control__controller-set[_ngcontent-%COMP%] {\n  height: 10vw;\n  border-top: solid 0.6vw;\n  flex: 1;\n  align-items: center;\n  display: flex;\n}\n.quick-control__controller-set-span[_ngcontent-%COMP%] {\n  text-align: center;\n  flex: 1;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInByaW50ZXItc3RhdHVzLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUNBO0VBQ0UsbUJBQUE7RUFDQSxXQUFBO0VBQ0EsWUFBQTtFQUNBLHFCQUFBO0VBQ0EsZ0JBQUE7RUFDQSxnQkFBQTtBQUFGO0FBRUU7RUFDRSxrQkFBQTtFQUNBLG1CQUFBO0FBQUo7QUFHSTtFQUNFLG9CQUFBO0VBQ0EscUJBQUE7RUFDQSxnQkFBQTtFQUNBLFVBQUE7QUFETjtBQUtJO0VBQ0UsYUFBQTtBQUhOO0FBTUk7RUFDRSxhQUFBO0FBSk47QUFPSTtFQUNFLGFBQUE7QUFMTjtBQVFJO0VBQ0UsYUFBQTtBQU5OO0FBU0k7RUFDRSxhQUFBO0FBUE47QUFVSTtFQUNFLGFBQUE7QUFSTjtBQVlFO0VBQ0UsY0FBQTtBQVZKO0FBYUU7RUFDRSxjQUFBO0VBQ0EsZ0JBQUE7QUFYSjtBQWNFO0VBQ0UsY0FBQTtBQVpKO0FBZ0JBO0VBQ0UsZUFBQTtFQUNBLE9BQUE7RUFDQSxNQUFBO0VBQ0EsUUFBQTtFQUNBLFNBQUE7RUFDQSxxQ0FBQTtFQUNBLG9DQUFBO0VBQ0EsV0FBQTtFQUNBLFVBQUE7QUFiRjtBQWVFO0VBQ0UsV0FBQTtFQUNBLGNBQUE7RUFDQSxtQkFBQTtFQUNBLGtCQUFBO0VBQ0EsaUJBQUE7QUFiSjtBQWVJO0VBQ0UsYUFBQTtBQWJOO0FBZ0JJO0VBQ0UsZ0JBQUE7RUFDQSxjQUFBO0VBQ0EsZ0JBQUE7RUFDQSxrQkFBQTtBQWROO0FBZ0JNO0VBQ0Usa0JBQUE7RUFDQSxjQUFBO0VBQ0EsZ0JBQUE7QUFkUjtBQWtCSTtFQUNFLGdCQUFBO0VBQ0EsZ0JBQUE7RUFDQSxPQUFBO0FBaEJOO0FBbUJJO0VBQ0UsZ0JBQUE7RUFDQSxnQkFBQTtFQUNBLE9BQUE7QUFqQk47QUFvQkk7RUFDRSxZQUFBO0VBQ0EsdUJBQUE7RUFDQSxPQUFBO0VBQ0EsbUJBQUE7RUFDQSxhQUFBO0FBbEJOO0FBb0JNO0VBQ0Usa0JBQUE7RUFDQSxPQUFBO0FBbEJSIiwiZmlsZSI6InByaW50ZXItc3RhdHVzLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLy8gUHJvcHJpw6l0w6lzIGR1IHRhYmxlYXVcclxuLnByaW50ZXItc3RhdHVzIHtcclxuICB0YWJsZS1sYXlvdXQ6IGZpeGVkO1xyXG4gIHdpZHRoOiAxMDAlO1xyXG4gIGhlaWdodDogNDB2aDtcclxuICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbiAgb3ZlcmZsb3c6IGhpZGRlbjtcclxuICBtYXJnaW4tbGVmdDogNnZoO1xyXG5cclxuICAmX192YWx1ZSB7IFxyXG4gICAgdGV4dC1hbGlnbjogY2VudGVyOyAvLyBDZW50cmUgdG91cyBsZXMgdGV4dGVzIHByw6lzZW50cyBkYW5zIHRvdXRlcyBsZXMgY2FzZXMgZHUgdGFibGVhdVxyXG4gICAgdmVydGljYWwtYWxpZ246IHRvcDsgIC8vIEFsaWduZSB0b3VzIGxlcyBvYmpldHMgdmVycyBsZSBoYXV0IGRhbnMgdG91dGVzIGxlcyBjYXNlcyBkdSB0YWJsZWF1XHJcblxyXG4gICAgLy8gRGltZW5zaW9ubmUgdG91dGVzIGxlcyBpbWFnZXMgZHUgdGFibGVhdVxyXG4gICAgJiBpbWcge1xyXG4gICAgICBwYWRkaW5nLWxlZnQ6IDIuNzV2dztcclxuICAgICAgcGFkZGluZy1yaWdodDogMi43NXZ3O1xyXG4gICAgICBwYWRkaW5nLXRvcDogNHZoO1xyXG4gICAgICB3aWR0aDogOXZ3O1xyXG4gICAgfVxyXG5cclxuICAgIFxyXG4gICAgJi0xIHtcclxuICAgICAgd2lkdGg6IDE1LjV2dzsgIC8vIEFwbGlxdWUgdW5lIGxvbmd1ZXVyIMOgIGxhIGNhc2UgMVxyXG4gICAgfVxyXG4gICAgXHJcbiAgICAmLTIge1xyXG4gICAgICB3aWR0aDogMTUuNXZ3OyAgLy8gQXBsaXF1ZSB1bmUgbG9uZ3VldXIgw6AgbGEgY2FzZSAyXHJcbiAgICB9XHJcbiAgICBcclxuICAgICYtMyB7XHJcbiAgICAgIHdpZHRoOiAxNS41dnc7ICAvLyBBcGxpcXVlIHVuZSBsb25ndWV1ciDDoCBsYSBjYXNlIDNcclxuICAgIH1cclxuICAgIFxyXG4gICAgJi00IHtcclxuICAgICAgd2lkdGg6IDE1LjV2dzsgIC8vIEFwbGlxdWUgdW5lIGxvbmd1ZXVyIMOgIGxhIGNhc2UgNFxyXG4gICAgfVxyXG4gICAgXHJcbiAgICAmLTUge1xyXG4gICAgICB3aWR0aDogMTUuNXZ3OyAgLy8gQXBsaXF1ZSB1bmUgbG9uZ3VldXIgw6AgbGEgY2FzZSA1XHJcbiAgICB9XHJcbiAgICBcclxuICAgICYtNiB7XHJcbiAgICAgIHdpZHRoOiAxNS41dnc7ICAvLyBBcGxpcXVlIHVuZSBsb25ndWV1ciDDoCBsYSBjYXNlIDZcclxuICAgIH1cclxuICB9XHJcbiAgXHJcbiAgJl9fdW5pdCB7XHJcbiAgICBmb250LXNpemU6IDkwJTsgLy8gQXBwbGlxdWUgdW5lIGdyb3NzZXVyIGRlcyBjYXJhY3TDqHJlcyBwb3VyIGxlcyB1bml0w6lzXHJcbiAgfVxyXG4gIFxyXG4gICZfX2FjdHVhbC12YWx1ZSB7XHJcbiAgICBmb250LXNpemU6IDkwJTsgLy8gQXBwbGlxdWUgdW5lIGdyb3NzZXVyIGRlcyBjYXJhY3TDqHJlcyBwb3VyIGxlcyB2YWxldXJzIG1lc3Vyw6lzIHBhciBsZXMgY2FwdGV1cnNcclxuICAgIGZvbnQtd2VpZ2h0OiA1MDA7IC8vIE1ldCBsZXMgY2FyYWN0w6hyZXMgZW4gZ3Jhc1xyXG4gIH1cclxuXHJcbiAgJl9fc2V0LXZhbHVlIHtcclxuICAgIGZvbnQtc2l6ZTogOTAlOyAvLyBBcHBsaXF1ZSB1bmUgZ3Jvc3NldXIgZGVzIGNhcmFjdMOocmVzIHBvdXIgbGVzIHZhbGV1ciBhcHBsaXF1w6llc1xyXG4gIH1cclxufVxyXG5cclxuLnF1aWNrLWNvbnRyb2wge1xyXG4gIHBvc2l0aW9uOiBmaXhlZDtcclxuICBsZWZ0OiAwO1xyXG4gIHRvcDogMDtcclxuICByaWdodDogMDtcclxuICBib3R0b206IDA7XHJcbiAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSgwLCAwLCAwLCAwLjg1KTtcclxuICB0cmFuc2l0aW9uOiBvcGFjaXR5IDAuNHMgZWFzZS1pbi1vdXQ7XHJcbiAgei1pbmRleDogMTA7XHJcbiAgb3BhY2l0eTogMDtcclxuXHJcbiAgJl9fY29udHJvbGxlciB7XHJcbiAgICB3aWR0aDogMzV2dztcclxuICAgIG1hcmdpbjogMCBhdXRvO1xyXG4gICAgYm9yZGVyOiBzb2xpZCAwLjZ2dztcclxuICAgIGJvcmRlci1yYWRpdXM6IDN2dztcclxuICAgIG1hcmdpbi10b3A6IDEuNXZoO1xyXG5cclxuICAgICYtcm93IHtcclxuICAgICAgZGlzcGxheTogZmxleDtcclxuICAgIH1cclxuXHJcbiAgICAmLXZhbHVlIHtcclxuICAgICAgcGFkZGluZzogM3ZoIDZ2dztcclxuICAgICAgZm9udC1zaXplOiA4dnc7XHJcbiAgICAgIGZvbnQtd2VpZ2h0OiA1MDA7XHJcbiAgICAgIHRleHQtYWxpZ246IGNlbnRlcjtcclxuXHJcbiAgICAgICYtdW5pdCB7XHJcbiAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gICAgICAgIGZvbnQtc2l6ZTogNHZ3O1xyXG4gICAgICAgIGZvbnQtd2VpZ2h0OiA0MDA7XHJcbiAgICAgIH1cclxuICAgIH1cclxuXHJcbiAgICAmLWluY3JlYXNlIHtcclxuICAgICAgcGFkZGluZzogM3ZoIDZ2dztcclxuICAgICAgZm9udC13ZWlnaHQ6IDUwMDtcclxuICAgICAgZmxleDogMTtcclxuICAgIH1cclxuXHJcbiAgICAmLWRlY3JlYXNlIHtcclxuICAgICAgcGFkZGluZzogM3ZoIDZ2dztcclxuICAgICAgZm9udC13ZWlnaHQ6IDUwMDtcclxuICAgICAgZmxleDogMTtcclxuICAgIH1cclxuXHJcbiAgICAmLXNldCB7XHJcbiAgICAgIGhlaWdodDogMTB2dztcclxuICAgICAgYm9yZGVyLXRvcDogc29saWQgMC42dnc7XHJcbiAgICAgIGZsZXg6IDE7XHJcbiAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbiAgICAgIGRpc3BsYXk6IGZsZXg7XHJcblxyXG4gICAgICAmLXNwYW4ge1xyXG4gICAgICAgIHRleHQtYWxpZ246IGNlbnRlcjtcclxuICAgICAgICBmbGV4OiAxO1xyXG4gICAgICB9XHJcbiAgICB9XHJcbiAgfVxyXG59Il19 */"] });
 var QuickControlView;
 (function (QuickControlView) {
     QuickControlView[QuickControlView["NONE"] = 0] = "NONE";
@@ -8250,15 +8220,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "EnclosureOctoprintService": () => (/* binding */ EnclosureOctoprintService)
 /* harmony export */ });
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs */ 10745);
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ 50635);
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/operators */ 53158);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 26078);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 80228);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs */ 78947);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs */ 10745);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs/operators */ 50635);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs/operators */ 53158);
 /* harmony import */ var _config_config_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../config/config.service */ 8696);
 /* harmony import */ var _model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../model */ 3256);
 /* harmony import */ var _notification_notification_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../notification/notification.service */ 75769);
 /* harmony import */ var _enclosure_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./enclosure.service */ 34101);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ 3184);
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/common/http */ 28784);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ 28784);
 
 
 
@@ -8276,25 +8249,103 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
         this.configService = configService;
         this.notificationService = notificationService;
         this.http = http;
+        this.subscriptions = new rxjs__WEBPACK_IMPORTED_MODULE_4__.Subscription();
         this.currentPSUState = _model__WEBPACK_IMPORTED_MODULE_1__.PSUState.ON;
+        this.enclosureStatusSubject = new rxjs__WEBPACK_IMPORTED_MODULE_5__.Subject();
+        this.enclosureStatus = {
+            enclosure: {
+                temperature: {
+                    current: 0,
+                    set: 0,
+                    unit: '°C',
+                }
+            },
+            storage: {
+                temperature: {
+                    current: 0,
+                    set: 0,
+                    unit: '°C',
+                }
+            },
+        };
+        this.subscriptions.add((0,rxjs__WEBPACK_IMPORTED_MODULE_6__.timer)(0, 1000).subscribe(() => {
+            this.getEnclosureTemperature().subscribe({
+                next: (temperatureReading) => (this.enclosureStatus.enclosure.temperature.current = temperatureReading.temperature),
+                error: (error) => {
+                    this.notificationService.setNotification({
+                        heading: $localize `:@@error-enclosure-temp:Can't retrieve enclosure temperature!`,
+                        text: error.message,
+                        type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
+                        time: new Date(),
+                    });
+                },
+            });
+            this.getStorageTemperature().subscribe({
+                next: (temperatureReading) => (this.enclosureStatus.storage.temperature.current = temperatureReading.temperature),
+                error: (error) => {
+                    this.notificationService.setNotification({
+                        heading: $localize `:@@error-enclosure-temp:Can't retrieve storage temperature!`,
+                        text: error.message,
+                        type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
+                        time: new Date(),
+                    });
+                },
+            });
+            this.getTemperatureSetValue(this.configService.getAmbientTemperatureSensorName()).subscribe({
+                next: (temperature) => (this.enclosureStatus.enclosure.temperature.set = temperature),
+                error: (error) => {
+                    this.notificationService.setNotification({
+                        heading: $localize `:@@error-enclosure-temp:Can't retrieve storage temperature!`,
+                        text: error.message,
+                        type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
+                        time: new Date(),
+                    });
+                },
+            });
+            this.getTemperatureSetValue(this.configService.getStorageTemperatureSensorName()).subscribe({
+                next: (temperature) => (this.enclosureStatus.storage.temperature.set = temperature),
+                error: (error) => {
+                    this.notificationService.setNotification({
+                        heading: $localize `:@@error-enclosure-temp:Can't retrieve storage temperature!`,
+                        text: error.message,
+                        type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
+                        time: new Date(),
+                    });
+                },
+            });
+            this.enclosureStatusSubject.next(this.enclosureStatus);
+        }));
+    }
+    getEnclosureStatusSubscribable() {
+        return this.enclosureStatusSubject;
     }
     // Definition de la méthode pour qu'il récupère les données du capteur de l'enceinte des filaments dans OctoPrint
     getEnclosureTemperature() {
         return this.http
             .get(this.configService.getApiURL('plugin/enclosure/inputs/' + this.configService.getAmbientTemperatureSensorName(), false), this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.map)((data) => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.map)((data) => {
             return {
                 temperature: data.temp_sensor_temp,
                 humidity: data.temp_sensor_humidity,
                 unit: data.use_fahrenheit ? '°F' : '°C',
+            };
+        }));
+    }
+    getTemperatureSetValue(identifier) {
+        return this.http
+            .get(this.configService.getApiURL('plugin/enclosure/outputs/' + identifier, false), this.configService.getHTTPHeaders())
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.map)((data) => {
+            return {
+                temperature: data.temp_ctr_set_value,
             };
         }));
     }
     // Definition de la méthode pour qu'il récupère les données du capteur de l'emplacement des filaments dans OctoPrint
     getStorageTemperature() {
         return this.http
-            .get(this.configService.getApiURL('plugin/enclosure/inputs/' + this.configService.getStorageTemperatureSensorName(), false), this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.map)((data) => {
+            .get(this.configService.getApiURL('plugin/enclosure/inputs/' + this.configService.getStorageTemperatureSensorName(), // requête HTTP pour aller récupéré les données d'un capteur dans le plugin Enclosure dans OctoPrint
+        false), this.configService.getHTTPHeaders())
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.map)((data) => {
             return {
                 temperature: data.temp_sensor_temp,
                 humidity: data.temp_sensor_humidity,
@@ -8302,20 +8353,22 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
             };
         }));
     }
+    // Definition de la méthode qui va donner une température cible à un élément chauffant dans le plugin Enclosure dans OctoPrint
     setTemperatureHeater(identifier, temperature) {
         const temperatureEnclosure = {
             temperature,
         };
         this.http
-            .patch(this.configService.getApiURL('plugin/enclosure/temperature/' + identifier, false), temperatureEnclosure, this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .patch(this.configService.getApiURL('plugin/enclosure/temperature/' + identifier, false), // Requête HTTP pour aller insérer dans le plugin Enclosure la température cible à l'élément chauffant passé en paramètre
+        temperatureEnclosure, this.configService.getHTTPHeaders())
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-set-color:Can't set Temperature target!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
@@ -8327,14 +8380,14 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
         };
         this.http
             .patch(this.configService.getApiURL('plugin/enclosure/neopixel/' + identifier, false), colorBody, this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-set-color:Can't set LED color!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
@@ -8345,14 +8398,14 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
         };
         this.http
             .patch(this.configService.getApiURL('plugin/enclosure/outputs/' + identifier, false), outputBody, this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-set-output:Can't set output!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
@@ -8364,28 +8417,28 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
         };
         this.http
             .patch(this.configService.getApiURL('plugin/enclosure/pwm/' + identifier, false), pwmBody, this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-set-output:Can't set output!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
     runEnclosureShell(identifier) {
         this.http
             .post(this.configService.getApiURL('plugin/enclosure/shell/' + identifier, false), this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-run-enclosure-shell:Can't run enclosure shell!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
@@ -8421,29 +8474,29 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
         };
         this.http
             .post(this.configService.getApiURL('plugin/psucontrol'), psuControlPayload, this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-send-psu-gcode:Can't send GCode!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
     setPSUStateOphomControl(state) {
         this.http
             .get(this.configService.getApiURL('plugin/ophom?action=checkplugstatus'), this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-send-ophom-gcode:Can't update Ophom Plug!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
-        }), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.map)((data) => {
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
+        }), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.map)((data) => {
             if (data.reponse == 1) {
                 if (state == _model__WEBPACK_IMPORTED_MODULE_1__.PSUState.OFF) {
                     this.toggleOphom();
@@ -8460,14 +8513,14 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
     toggleOphom() {
         this.http
             .get(this.configService.getApiURL('plugin/ophom?action=toggle'), this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-send-psu-gcode:Can't send GCode!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
@@ -8478,14 +8531,14 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
         };
         this.http
             .post(this.configService.getApiURL('plugin/tplinksmartplug'), tpLinkPayload, this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-send-smartplug-gcode:Can't send GCode!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
@@ -8497,14 +8550,14 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
         };
         this.http
             .post(this.configService.getApiURL('plugin/tasmota'), tasmotaPayload, this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-send-tasmota-plug:Can't update Tasmota!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
@@ -8516,14 +8569,14 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
         };
         this.http
             .post(this.configService.getApiURL('plugin/tasmota_mqtt'), tasmotaMqttPayload, this.configService.getHTTPHeaders())
-            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.catchError)(error => {
+            .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.catchError)(error => {
             this.notificationService.setNotification({
                 heading: $localize `:@@error-send-tasmota-plug-mqtt:Can't update Tasmota MQTT!`,
                 text: error.message,
                 type: _model__WEBPACK_IMPORTED_MODULE_1__.NotificationType.ERROR,
                 time: new Date(),
             });
-            return (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.of)(null);
+            return (0,rxjs__WEBPACK_IMPORTED_MODULE_9__.of)(null);
         }))
             .subscribe();
     }
@@ -8531,8 +8584,8 @@ class EnclosureOctoprintService extends _enclosure_service__WEBPACK_IMPORTED_MOD
         this.currentPSUState === _model__WEBPACK_IMPORTED_MODULE_1__.PSUState.ON ? this.setPSUState(_model__WEBPACK_IMPORTED_MODULE_1__.PSUState.OFF) : this.setPSUState(_model__WEBPACK_IMPORTED_MODULE_1__.PSUState.ON);
     }
 }
-EnclosureOctoprintService.ɵfac = function EnclosureOctoprintService_Factory(t) { return new (t || EnclosureOctoprintService)(_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵinject"](_config_config_service__WEBPACK_IMPORTED_MODULE_0__.ConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵinject"](_notification_notification_service__WEBPACK_IMPORTED_MODULE_2__.NotificationService), _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_8__.HttpClient)); };
-EnclosureOctoprintService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefineInjectable"]({ token: EnclosureOctoprintService, factory: EnclosureOctoprintService.ɵfac });
+EnclosureOctoprintService.ɵfac = function EnclosureOctoprintService_Factory(t) { return new (t || EnclosureOctoprintService)(_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵinject"](_config_config_service__WEBPACK_IMPORTED_MODULE_0__.ConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵinject"](_notification_notification_service__WEBPACK_IMPORTED_MODULE_2__.NotificationService), _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_11__.HttpClient)); };
+EnclosureOctoprintService.ɵprov = /*@__PURE__*/ _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineInjectable"]({ token: EnclosureOctoprintService, factory: EnclosureOctoprintService.ɵfac });
 
 
 /***/ }),
@@ -8553,24 +8606,32 @@ __webpack_require__.r(__webpack_exports__);
 
 class EnclosureService {
     constructor() {
-        this.enclosureTemp = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(0);
-        this.storageTemp = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(0);
-        this.minEnclosure = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(0);
-        this.maxEnclosure = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(50);
-        this.minStorage = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(0);
-        this.maxStorage = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(90);
-        this.enclosureTempDesire = this.enclosureTemp.asObservable();
-        this.storageTempDesire = this.storageTemp.asObservable();
-        this.minTempEnclosure = this.minEnclosure.asObservable();
-        this.maxTempEnclosure = this.maxEnclosure.asObservable();
-        this.minTempStorage = this.minStorage.asObservable();
-        this.maxTempStorage = this.maxStorage.asObservable();
+        this.enclosureTemp = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(0); // Crée une nouvelle variable égale à 0 qui pourra être lu par d'autre fenêtre
+        this.storageTemp = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(0); // Crée une nouvelle variable égale à 0 qui pourra être lu par d'autre fenêtre
+        this.minEnclosure = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(0); // Crée une nouvelle variable égale à 0 qui pourra être lu par d'autre fenêtre
+        this.maxEnclosure = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(50); // Crée une nouvelle variable égale à 50 qui pourra être lu par d'autre fenêtre
+        this.minStorage = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(0); // Crée une nouvelle variable égale à 0 qui pourra être lu par d'autre fenêtre
+        this.maxStorage = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(90); // Crée une nouvelle variable égale à 90 qui pourra être lu par d'autre fenêtre
+        this.enclosureTempDesire = this.enclosureTemp.asObservable(); // Permet de lire cette variable par d'autre fenêtre
+        this.storageTempDesire = this.storageTemp.asObservable(); // Permet de lire cette variable par d'autre fenêtre
+        this.minTempEnclosure = this.minEnclosure.asObservable(); // Permet de lire cette variable par d'autre fenêtre
+        this.maxTempEnclosure = this.maxEnclosure.asObservable(); // Permet de lire cette variable par d'autre fenêtre
+        this.minTempStorage = this.minStorage.asObservable(); // Permet de lire cette variable par d'autre fenêtre
+        this.maxTempStorage = this.maxStorage.asObservable(); // Permet de lire cette variable par d'autre fenêtre
     }
+    /*
+    * @brief: Méthode qui permet de mettre à jour la température du boitier pour permettre un traquage des modification de se paramètre apporté par les autres fenêtres
+    * @param newTemp: Nouvelle température appliquée pour le boitier
+    */
     updateEnclosureTemp(newTemp) {
-        this.enclosureTemp.next(newTemp);
+        this.enclosureTemp.next(newTemp); // Met à jour la nouvelle température désirée pour le boitier
     }
+    /*
+    * @brief: Méthode qui permet de mettre à jour la température de l'emplacement des filaments pour permettre un traquage des modification de se paramètre apporté par les autres fenêtres
+    * @param newTemp: Nouvelle température appliquée pour l'emplacement des filaments
+    */
     updateStorageTemp(newTemp) {
-        this.storageTemp.next(newTemp);
+        this.storageTemp.next(newTemp); // Met à jour la nouvelle température désirée pour l'emplacement des filaments
     }
 }
 EnclosureService.ɵfac = function EnclosureService_Factory(t) { return new (t || EnclosureService)(); };

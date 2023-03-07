@@ -1,13 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, timer } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { ConfigService } from '../config/config.service';
-import { PrinterStatus, TemperatureReading, NotificationType } from '../model';
+import { PrinterStatus, TemperatureReading } from '../model';
+import { EnclosureStatus } from '../model/octoprint';
 import { PrinterService } from '../services/printer/printer.service';
 import { SocketService } from '../services/socket/socket.service';
 import { EnclosureService } from '../services/enclosure/enclosure.service'; // Pour récupérer et enregistrer les valeurs de température de l'enceinte et de l'emplacement des filaments. Aussi pour communiquer avec le plugin Enclosure
-import { HttpErrorResponse } from '@angular/common/http'; // Pour faire des requêtes http pour communiquer avec OctoPrint
-import { NotificationService } from '../notification/notification.service'; // Pour afficher des notifications à l'écran
 
 @Component({
   selector: 'app-printer-status',
@@ -42,55 +41,21 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
   public enclosureTarget: number = this.idealTemperatureEnclosure; // Variable qui contient la température cible du boitier
   public storageTarget: number = this.idealTemperatureFilaments; // Variable qui contient la température cible de l'emplacement des filaments
   public humidite: number = 0;        // Humidité présent dans l'emplacement des filaments
+  public enclosureStatus: EnclosureStatus;
+  public testNumber: number;
+  public test: number;
 
   public constructor(
     private printerService: PrinterService,
     private configService: ConfigService,
     private socketService: SocketService,
     private enclosureService: EnclosureService, // Instencie un objet EnclosureService
-    private notificationService: NotificationService, // Instencie un objet NotificationService
   ) {
     this.hotendTarget = this.configService.getDefaultHotendTemperature();
     this.heatbedTarget = this.configService.getDefaultHeatbedTemperature();
     this.fanTarget = this.configService.getDefaultFanSpeed();
-
-    if (this.configService.getStorageTemperatureSensorName() !== null) {  // Si un numéro d'ID est attribué pour le capteur de l'emplacement des filaments dans les settings plugin d'OctoDash
-      this.subscriptions.add( // Ajoute une lecture 
-        timer(0, 1000).subscribe(() => { // La lecture démarre un timer qui exécute une première fois après 0 secondes, mais par la suite à chaque 1 seconde pour aller lire
-          this.enclosureService.getStorageTemperature().subscribe({ // ajoute une lecture des données du capteur à l'emplacement des filaments
-            next: (temperatureReading: TemperatureReading) => (this.storageTemperature = temperatureReading), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
-            error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
-              this.notificationService.setNotification({
-                heading: $localize`:@@error-enclosure-temp:Can't retrieve enclosure temperature!`,
-                text: error.message,
-                type: NotificationType.ERROR,
-                time: new Date(),
-              });
-            },
-          });
-        }),
-      );
-    }
-
-    if (this.configService.getAmbientTemperatureSensorName() !== null) {  // Si un numéro d'ID est attribué pour le capteur de l'emplacement des filaments dans les settings plugin d'OctoDash
-      this.subscriptions.add( // Ajoute une lecture 
-        timer(0, 1000).subscribe(() => { // La lecture démarre un timer qui exécute une première fois après 0 secondes, mais par la suite à chaque 1 seconde pour aller lire
-          this.enclosureService.getEnclosureTemperature().subscribe({ // ajoute une lecture des données du capteur du boitier
-            next: (temperatureReading: TemperatureReading) => (this.enclosureTemperature = temperatureReading), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
-            error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
-              this.notificationService.setNotification({
-                heading: $localize`:@@error-enclosure-temp:Can't retrieve enclosure temperature!`,
-                text: error.message,
-                type: NotificationType.ERROR,
-                time: new Date(),
-              });
-            },
-          });
-        }),
-      );
-    }
-    this.enclosureService.enclosureTempDesire.subscribe(temp => this.tempEnclosureDesire = temp); // Va récupérer la valeur paramétré pour le boitier
-    this.enclosureService.storageTempDesire.subscribe(temp => this.tempStorageDesire = temp); // Va récupérer la valeur paramétré pour l'emplacement des filaments
+    this.enclosureTarget = this.tempEnclosureDesire;
+    this.storageTarget = this.tempStorageDesire;
     this.enclosureService.minTempEnclosure.subscribe(temp => this.minTemperatureEnclosure = temp);  // Va récupérer la température minimum pour le boitier
     this.enclosureService.maxTempEnclosure.subscribe(temp => this.maxTemperatureEnclosure = temp);  // Va récupérer la température maximum pour le boitier
     this.enclosureService.minTempStorage.subscribe(temp => this.minTemperatureFilaments = temp);  // Va récupérer la température minimum pour l'emplacement des filaments
@@ -102,6 +67,9 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
       this.socketService.getPrinterStatusSubscribable().subscribe((status: PrinterStatus): void => {
         this.printerStatus = status;
       }),
+    );
+    this.subscriptions.add(
+      this.enclosureService.getEnclosureStatusSubscribable().subscribe(status => {this.enclosureStatus = status})
     );
   }
 
@@ -292,7 +260,7 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
    * @param: aucun
    */
   private setTemperatureEnclosure(): void {
-    this.enclosureService.updateEnclosureTemp(this.enclosureTarget);  // Enregistre la valeur paramétré dans le service de partage
+    //this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(), this.enclosureTarget);
     this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(),this.enclosureTarget);  // Envoie la température de l'enceinte souhaité au plugin Enclosure pour qu'il agit avec l'élément chauffant
     this.hideQuickControl();  // Ferme l'affichage de paramétrage de la température
   }
@@ -302,7 +270,7 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
    * @param: aucun
    */
   private setTemperatureFilaments(): void {
-    this.enclosureService.updateStorageTemp(this.storageTarget);  // Enregistre la valeur paramétré dans le service de partage
+    //this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(), this.storageTarget);
     this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(),this.storageTarget);  // Envoie la température de l'emplacement des filament souhaité au plugin Enclosure pour qu'il agit avec l'élément chauffant
     this.hideQuickControl();  // Ferme l'affichage de paramétrage de la température
   }

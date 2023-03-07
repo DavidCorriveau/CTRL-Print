@@ -50,7 +50,6 @@ export class PrintControlComponent implements OnInit, OnDestroy {
     this.feedrate = 100;
     this.zOffset = 0;
 
-    this.enclosureService.enclosureTempDesire.subscribe(temp => this.enclosureTarget = temp); // Va récupérer la valeur paramétré pour le boitier
     this.enclosureService.storageTempDesire.subscribe(temp => this.storageTarget = temp); // Va récupérer la valeur paramétré pour l'emplacement des filaments
     this.enclosureService.minTempEnclosure.subscribe(temp => this.minTemperatureEnclosure = temp);  // Va récupérer la température minimum pour le boitier
     this.enclosureService.maxTempEnclosure.subscribe(temp => this.maxTemperatureEnclosure = temp);  // Va récupérer la température maximum pour le boitier

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ConfigService } from '../../config/config.service';
@@ -16,21 +16,101 @@ import {
   TasmotaCommand,
   TasmotaMqttCommand,
   TPLinkCommand,
+  EnclosureStatus,
 } from '../../model/octoprint';
 import { NotificationService } from '../../notification/notification.service';
 import { EnclosureService } from './enclosure.service';
+import { HttpErrorResponse } from '@angular/common/http'; // Pour faire des requêtes http pour communiquer avec OctoPrint
 
 @Injectable()
 export class EnclosureOctoprintService extends EnclosureService {
+
+  private enclosureStatusSubject: Subject<EnclosureStatus>;
+  private enclosureStatus: EnclosureStatus;
+  private subscriptions: Subscription = new Subscription();
+
   public constructor(
     private configService: ConfigService,
     private notificationService: NotificationService,
     private http: HttpClient,
   ) {
-    super()
+    super();
+    this.enclosureStatusSubject = new Subject<EnclosureStatus>();
+    this.enclosureStatus = {
+      enclosure: {
+        temperature: {
+          current: 0,
+          set: 0,
+          unit: '°C',
+        }
+      },
+      storage: {
+        temperature: {
+          current: 0,
+          set: 0,
+          unit: '°C',
+        }
+      },
+    } as EnclosureStatus;
+
+    this.subscriptions.add(
+      timer(0,1000).subscribe(() => {
+        this.getEnclosureTemperature().subscribe({ // ajoute une lecture des données du capteur du boitier
+          next: (temperatureReading: TemperatureReading) => (this.enclosureStatus.enclosure.temperature.current = temperatureReading.temperature), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
+          error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
+            this.notificationService.setNotification({
+              heading: $localize`:@@error-enclosure-temp:Can't retrieve enclosure temperature!`,
+              text: error.message,
+              type: NotificationType.ERROR,
+              time: new Date(),
+            });
+          },
+        });
+
+        this.getStorageTemperature().subscribe({ // ajoute une lecture des données du capteur du boitier
+          next: (temperatureReading: TemperatureReading) => (this.enclosureStatus.storage.temperature.current = temperatureReading.temperature), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
+          error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
+            this.notificationService.setNotification({
+              heading: $localize`:@@error-enclosure-temp:Can't retrieve storage temperature!`,
+              text: error.message,
+              type: NotificationType.ERROR,
+              time: new Date(),
+            });
+          },
+        });
+
+        this.getTemperatureSetValue(this.configService.getAmbientTemperatureSensorName()).subscribe({ // ajoute une lecture des données du capteur du boitier
+          next: (temperature: number) => (this.enclosureStatus.enclosure.temperature.set = temperature), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
+          error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
+            this.notificationService.setNotification({
+              heading: $localize`:@@error-enclosure-temp:Can't retrieve storage temperature!`,
+              text: error.message,
+              type: NotificationType.ERROR,
+              time: new Date(),
+            });
+          },
+        });
+
+        this.getTemperatureSetValue(this.configService.getStorageTemperatureSensorName()).subscribe({ // ajoute une lecture des données du capteur du boitier
+          next: (temperature) => (this.enclosureStatus.storage.temperature.set = temperature), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
+          error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
+            this.notificationService.setNotification({
+              heading: $localize`:@@error-enclosure-temp:Can't retrieve storage temperature!`,
+              text: error.message,
+              type: NotificationType.ERROR,
+              time: new Date(),
+            });
+          },
+        });
+        this.enclosureStatusSubject.next(this.enclosureStatus);
+      })
+    )
   }
   private currentPSUState = PSUState.ON;
 
+  getEnclosureStatusSubscribable(): Observable<EnclosureStatus> {
+    return this.enclosureStatusSubject;
+  }
   // Definition de la méthode pour qu'il récupère les données du capteur de l'enceinte des filaments dans OctoPrint
   getEnclosureTemperature(): Observable<TemperatureReading> {
     return this.http
@@ -50,6 +130,26 @@ export class EnclosureOctoprintService extends EnclosureService {
           } as TemperatureReading;
         }),
       );
+  }
+
+  getTemperatureSetValue(identifier: number): Observable<number>
+  {
+    return this.http
+      .get(
+        this.configService.getApiURL(
+          'plugin/enclosure/outputs/' + identifier,
+          false,
+        ),
+        this.configService.getHTTPHeaders(),
+      )
+      .pipe(
+        map((data: EnclosurePluginAPI) => {
+          return {
+             temperature: data.temp_ctr_set_value,
+          } as unknown as number;
+        }),
+      );
+
   }
 
   // Definition de la méthode pour qu'il récupère les données du capteur de l'emplacement des filaments dans OctoPrint

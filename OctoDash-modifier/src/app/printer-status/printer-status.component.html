@@ -62,11 +62,11 @@
       <img src="assets/enclosure.svg" />
       <!-- Affiche la température courante du boitier en celcius -->
       <span class="printer-status__actual-value">
-        {{ enclosureTemperature.temperature }}<span class="printer-status__unit">°C</span>
+        {{ enclosureStatus.enclosure.temperature.current }} <span class="printer-status__unit">°C</span>
       </span>
       <!-- Affiche la température appliquée du boitier en celcius si elle n'est pas 0 -->
-      <span class="printer-status__set-value" *ngIf="this.tempEnclosureDesire != 0">
-        /{{ tempEnclosureDesire }}<span class="printer-status__unit">°C</span>
+      <span class="printer-status__set-value" *ngIf="enclosureStatus.enclosure.temperature.set">
+        /{{ enclosureStatus.enclosure.temperature.set.valueOf() }}<span class="printer-status__unit">°C</span>
       </span>
     </td>
 
@@ -80,11 +80,11 @@
     <img src="assets/filaments_3D.svg" />
     <!-- Affiche la température courante de l'emplacement des filaments en celcius -->
     <span class="printer-status__actual-value">
-      {{ storageTemperature.temperature }}<span class="printer-status__unit">°C</span>
+      {{ enclosureStatus.storage.temperature.current }}<span class="printer-status__unit">°C</span>
     </span>
     <!-- Affiche la température appliquée de l'emplacement des filaments en celcius si elle n'est pas 0 -->
-    <span class="printer-status__set-value" *ngIf="this.tempStorageDesire != 0">
-      /{{ tempStorageDesire }}<span class="printer-status__unit">°C</span>
+    <span class="printer-status__set-value" *ngIf="enclosureStatus.storage.temperature.set">  
+      /{{ enclosureStatus.storage.temperature.set }}<span class="printer-status__unit">°C</span>
     </span>
   </td>
 
@@ -95,7 +95,7 @@
      <img src="assets/humidity.svg" />
      <!-- Affiche l'humidité courante de l'emplacement des filaments en pourcentage -->
      <span class="printer-status__actual-value">
-       {{ storageTemperature.humidity }}<span class="printer-status__unit">%</span>
+        8 <span class="printer-status__unit">%</span>
      </span>
    </td>
   </tr>

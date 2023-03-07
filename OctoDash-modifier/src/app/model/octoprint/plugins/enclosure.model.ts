@@ -1,4 +1,15 @@
+import { Temperature } from '../../index';
+
 /* eslint-disable camelcase */
+export interface EnclosureStatus {
+  enclosure: Space;
+  storage: Space;
+}
+
+interface Space {
+  temperature: Temperature;
+  humidity: number
+}
 
 export interface EnclosurePluginAPI {
   controlled_io: string;
@@ -20,6 +31,7 @@ export interface EnclosurePluginAPI {
   index_id: number;
   use_fahrenheit: boolean;
   gpio_pin: string;
+  temp_ctr_set_value: number;
 }
 
 // Crée un nouveau model de variable pour aller écrire une température cible dans le plugin Enclosure dans Octoprint
