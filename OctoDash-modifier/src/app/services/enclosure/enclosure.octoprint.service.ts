@@ -8,9 +8,9 @@ import { NotificationType, PSUState, TemperatureReading } from '../../model';
 import {
   EnclosureColorBody,
   EnclosureOutputBody,
-  EnclosurePluginAPI,
+  EnclosurePluginOutputAPI,
   EnclosurePWMBody,
-  EnclosureTemperature,
+  EnclosurePluginInputAPI,
   OphomPlugStatus,
   PSUControlCommand,
   TasmotaCommand,
@@ -41,21 +41,23 @@ export class EnclosureOctoprintService extends EnclosureService {
         temperature: {
           current: 0,
           set: 0,
-          unit: '°C',
+          min: 0,
+          max: 50,
         }
       },
       storage: {
         temperature: {
           current: 0,
           set: 0,
-          unit: '°C',
+          min: 0,
+          max: 90,
         }
       },
     } as EnclosureStatus;
 
     this.subscriptions.add(
       timer(0,1000).subscribe(() => {
-        this.getEnclosureTemperature().subscribe({ // ajoute une lecture des données du capteur du boitier
+        this.getEnclosureTemperature(this.configService.getAmbientTemperatureSensorName()).subscribe({ // ajoute une lecture des données du capteur du boitier
           next: (temperatureReading: TemperatureReading) => (this.enclosureStatus.enclosure.temperature.current = temperatureReading.temperature), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
           error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
             this.notificationService.setNotification({
@@ -67,8 +69,11 @@ export class EnclosureOctoprintService extends EnclosureService {
           },
         });
 
-        this.getStorageTemperature().subscribe({ // ajoute une lecture des données du capteur du boitier
-          next: (temperatureReading: TemperatureReading) => (this.enclosureStatus.storage.temperature.current = temperatureReading.temperature), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
+        this.getEnclosureTemperature(this.configService.getStorageTemperatureSensorName()).subscribe({ // ajoute une lecture des données du capteur du boitier
+          next: (temperatureReading: TemperatureReading) => (
+            this.enclosureStatus.storage.temperature.current = temperatureReading.temperature,
+            this.enclosureStatus.storage.humidity = temperatureReading.humidity
+            ), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
           error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
             this.notificationService.setNotification({
               heading: $localize`:@@error-enclosure-temp:Can't retrieve storage temperature!`,
@@ -112,17 +117,17 @@ export class EnclosureOctoprintService extends EnclosureService {
     return this.enclosureStatusSubject;
   }
   // Definition de la méthode pour qu'il récupère les données du capteur de l'enceinte des filaments dans OctoPrint
-  getEnclosureTemperature(): Observable<TemperatureReading> {
+  getEnclosureTemperature(identifier: number): Observable<TemperatureReading> {
     return this.http
       .get(
         this.configService.getApiURL(
-          'plugin/enclosure/inputs/' + this.configService.getAmbientTemperatureSensorName(),
+          'plugin/enclosure/inputs/' + identifier,
           false,
         ),
         this.configService.getHTTPHeaders(),
       )
       .pipe(
-        map((data: EnclosurePluginAPI) => {
+        map((data: EnclosurePluginOutputAPI) => {
           return {
             temperature: data.temp_sensor_temp,
             humidity: data.temp_sensor_humidity,
@@ -143,10 +148,8 @@ export class EnclosureOctoprintService extends EnclosureService {
         this.configService.getHTTPHeaders(),
       )
       .pipe(
-        map((data: EnclosurePluginAPI) => {
-          return {
-             temperature: data.temp_ctr_set_value,
-          } as unknown as number;
+        map((data: EnclosurePluginOutputAPI) => {
+          return data.temp_ctr_set_value
         }),
       );
 
@@ -163,7 +166,7 @@ export class EnclosureOctoprintService extends EnclosureService {
         this.configService.getHTTPHeaders(),
       )
       .pipe(
-        map((data: EnclosurePluginAPI) => {
+        map((data: EnclosurePluginOutputAPI) => {
           return {
             temperature: data.temp_sensor_temp,
             humidity: data.temp_sensor_humidity,
@@ -175,7 +178,7 @@ export class EnclosureOctoprintService extends EnclosureService {
 
   // Definition de la méthode qui va donner une température cible à un élément chauffant dans le plugin Enclosure dans OctoPrint
   public setTemperatureHeater(identifier: number, temperature: number): void {
-    const temperatureEnclosure: EnclosureTemperature = {  // Crée une constante de type EnclosureTemperature qui contient la température passé en paramètre
+    const temperatureEnclosure: EnclosurePluginInputAPI = {  // Crée une constante de type EnclosureTemperature qui contient la température passé en paramètre
       temperature,
     };
     this.http 

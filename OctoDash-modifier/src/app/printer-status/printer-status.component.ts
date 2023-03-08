@@ -26,24 +26,13 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
   public QuickControlView = QuickControlView;
   public view = QuickControlView.NONE;
 
-  public maxTemperatureEnclosure: number;  // Valeur maximale de température pour le boitier
-  public minTemperatureEnclosure: number;   // Valeur minimale de température pour le boitier
-  public maxTemperatureFilaments: number;  // Valeur maximale de température pour l'espace des filaments
-  public minTemperatureFilaments: number;   // Valeur minimale de température pour l'espace des filaments
   public idealTemperatureFilaments = 50;  // Température idéal pour l'emplacement des filaments
   public idealTemperatureEnclosure = 25;  // Température idéal pour l'enceinte
   public valeurChangePourDefaut = -999; // Valeur pour changer entre le minimum et le maximum
 
-  public enclosureTemperature: TemperatureReading;  // Température actuelle du boitier
-  public storageTemperature: TemperatureReading;  // Température actuelle de l'emplacement des filaments
-  public tempStorageDesire: number = 0;   // Température appliqué par l'utilisateur 
-  public tempEnclosureDesire: number = 0;   // Température appliqué par l'utilisateur 
   public enclosureTarget: number = this.idealTemperatureEnclosure; // Variable qui contient la température cible du boitier
   public storageTarget: number = this.idealTemperatureFilaments; // Variable qui contient la température cible de l'emplacement des filaments
-  public humidite: number = 0;        // Humidité présent dans l'emplacement des filaments
-  public enclosureStatus: EnclosureStatus;
-  public testNumber: number;
-  public test: number;
+  public enclosureStatus: EnclosureStatus;  // Objet qui contient les informations de l'enceinte
 
   public constructor(
     private printerService: PrinterService,
@@ -54,12 +43,6 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
     this.hotendTarget = this.configService.getDefaultHotendTemperature();
     this.heatbedTarget = this.configService.getDefaultHeatbedTemperature();
     this.fanTarget = this.configService.getDefaultFanSpeed();
-    this.enclosureTarget = this.tempEnclosureDesire;
-    this.storageTarget = this.tempStorageDesire;
-    this.enclosureService.minTempEnclosure.subscribe(temp => this.minTemperatureEnclosure = temp);  // Va récupérer la température minimum pour le boitier
-    this.enclosureService.maxTempEnclosure.subscribe(temp => this.maxTemperatureEnclosure = temp);  // Va récupérer la température maximum pour le boitier
-    this.enclosureService.minTempStorage.subscribe(temp => this.minTemperatureFilaments = temp);  // Va récupérer la température minimum pour l'emplacement des filaments
-    this.enclosureService.maxTempStorage.subscribe(temp => this.maxTemperatureFilaments = temp);  // Va récupérer la température maximum pour l'emplacement des filaments
   }
 
   public ngOnInit(): void {
@@ -68,8 +51,8 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
         this.printerStatus = status;
       }),
     );
-    this.subscriptions.add(
-      this.enclosureService.getEnclosureStatusSubscribable().subscribe(status => {this.enclosureStatus = status})
+    this.subscriptions.add( // Ajoute une lecture automatique
+      this.enclosureService.getEnclosureStatusSubscribable().subscribe(status => {this.enclosureStatus = status}) // Lecture des informations de l'enceinte
     );
   }
 
@@ -218,10 +201,10 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
     this.enclosureTarget += value;  // Additionne la valeur à la température cible
     if (this.enclosureTarget < this.valeurChangePourDefaut) { // Si la température cible est plus petite que celle pour indiquer de changer pour la température maximum
       this.enclosureTarget = this.idealTemperatureEnclosure;  // Met la température cible égale à la température idéal
-    } else if (this.enclosureTarget < this.minTemperatureEnclosure) { // Si la température cible est plus petite que son minimum
-      this.enclosureTarget = this.minTemperatureEnclosure;  // Met la température cible à son minimum
-    } else if (this.enclosureTarget > this.maxTemperatureEnclosure) { // Si la température cible est plus grande que son maximum
-      this.enclosureTarget = this.maxTemperatureEnclosure;  // Met la température cible à son maximum
+    } else if (this.enclosureTarget < this.enclosureStatus.enclosure.temperature.min) { // Si la température cible est plus petite que son minimum
+      this.enclosureTarget = this.enclosureStatus.enclosure.temperature.min;  // Met la température cible à son minimum
+    } else if (this.enclosureTarget > this.enclosureStatus.enclosure.temperature.max) { // Si la température cible est plus grande que son maximum
+      this.enclosureTarget = this.enclosureStatus.enclosure.temperature.max;  // Met la température cible à son maximum
     }
   }
 
@@ -233,10 +216,10 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
     this.storageTarget += value;  // Additionne la valeur à la température cible
     if (this.storageTarget < this.valeurChangePourDefaut) { // Si la température cible est plus petite que celle pour indiquer de changer pour la température maximum
       this.storageTarget = this.idealTemperatureFilaments;  // Met la température cible égale à la température idéal
-    } else if (this.storageTarget < this.minTemperatureFilaments) { // Si la température cible est plus petite que son minimum
-      this.storageTarget = this.minTemperatureFilaments;  // Met la température cible à son minimum
-    } else if (this.storageTarget > this.maxTemperatureFilaments) { // Si la température cible est plus grande que son maximum
-      this.storageTarget = this.maxTemperatureFilaments;  // Met la température cible égale à la température maximum
+    } else if (this.storageTarget < this.enclosureStatus.storage.temperature.min) { // Si la température cible est plus petite que son minimum
+      this.storageTarget = this.enclosureStatus.storage.temperature.min;  // Met la température cible à son minimum
+    } else if (this.storageTarget > this.enclosureStatus.storage.temperature.max) { // Si la température cible est plus grande que son maximum
+      this.storageTarget = this.enclosureStatus.storage.temperature.max;  // Met la température cible égale à la température maximum
     }
   }
 
@@ -260,7 +243,6 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
    * @param: aucun
    */
   private setTemperatureEnclosure(): void {
-    //this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(), this.enclosureTarget);
     this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(),this.enclosureTarget);  // Envoie la température de l'enceinte souhaité au plugin Enclosure pour qu'il agit avec l'élément chauffant
     this.hideQuickControl();  // Ferme l'affichage de paramétrage de la température
   }
@@ -270,7 +252,6 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
    * @param: aucun
    */
   private setTemperatureFilaments(): void {
-    //this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(), this.storageTarget);
     this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(),this.storageTarget);  // Envoie la température de l'emplacement des filament souhaité au plugin Enclosure pour qu'il agit avec l'élément chauffant
     this.hideQuickControl();  // Ferme l'affichage de paramétrage de la température
   }

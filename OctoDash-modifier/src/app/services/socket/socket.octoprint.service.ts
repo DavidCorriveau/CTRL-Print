@@ -74,12 +74,10 @@ export class OctoPrintSocketService implements SocketService {
       bed: {
         current: 0,
         set: 0,
-        unit: '°C',
       },
       tool0: {
         current: 0,
         set: 0,
-        unit: '°C',
       },
       fanSpeed: this.configService.isDisplayLayerProgressEnabled() ? 0 : -1,
     } as PrinterStatus;
@@ -225,12 +223,14 @@ export class OctoPrintSocketService implements SocketService {
       this.printerStatus.bed = {
         current: Math.round(message?.current?.temps[0]?.bed?.actual),
         set: Math.round(message?.current?.temps[0]?.bed?.target),
-        unit: '°C',
+        min: 0,
+        max: 999,
       };
       this.printerStatus.tool0 = {
         current: Math.round(message?.current?.temps[0]?.tool0?.actual),
         set: Math.round(message?.current?.temps[0]?.tool0?.target),
-        unit: '°C',
+        min: 0,
+        max: 999,
       };
     }
     this.printerStatus.status = PrinterState[message.current.state.text.toLowerCase()];

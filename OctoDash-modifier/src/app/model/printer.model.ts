@@ -8,7 +8,8 @@ export interface PrinterStatus {
 export interface Temperature {
   current: number;
   set: number;
-  unit: string;
+  min: number;
+  max: number;
 }
 
 export enum PrinterState {

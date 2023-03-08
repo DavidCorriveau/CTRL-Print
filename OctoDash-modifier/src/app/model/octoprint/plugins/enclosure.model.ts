@@ -1,17 +1,18 @@
 import { Temperature } from '../../index';
 
-/* eslint-disable camelcase */
+// Interface qui contient les informations de l'enceinte
 export interface EnclosureStatus {
-  enclosure: Space;
-  storage: Space;
+  enclosure: Space; // Informations du boitier de l'imprimante 3D
+  storage: Space; // Informations de l'emplacement des filaments
 }
 
+// Interface qui contient les informations de températures et d'humidité
 interface Space {
-  temperature: Temperature;
-  humidity: number
+  temperature: Temperature; // Contient les informations de la température
+  humidity: number  // Contient l'humidité
 }
 
-export interface EnclosurePluginAPI {
+export interface EnclosurePluginOutputAPI {
   controlled_io: string;
   temp_sensor_address: string;
   temp_sensor_navbar: boolean;
@@ -31,11 +32,11 @@ export interface EnclosurePluginAPI {
   index_id: number;
   use_fahrenheit: boolean;
   gpio_pin: string;
-  temp_ctr_set_value: number;
+  temp_ctr_set_value: number; // Contient la température cible 
 }
 
 // Crée un nouveau model de variable pour aller écrire une température cible dans le plugin Enclosure dans Octoprint
-export interface EnclosureTemperature {
+export interface EnclosurePluginInputAPI {
   temperature: number;  // Contient une variable température
 }
 
