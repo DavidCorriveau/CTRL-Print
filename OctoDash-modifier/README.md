@@ -1,2 +1,2 @@
-# Code source de l'application Octodash modifié.
-Le dossier src est celui qui contient toute la logique de l'application
+# Code source de l'application OctoDash modifié.
+Le dossier src est celui qui contient toute la logique de l'application et le seule que nous avons modifié.
