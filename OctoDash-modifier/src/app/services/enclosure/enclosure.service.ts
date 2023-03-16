@@ -13,14 +13,14 @@ export abstract class EnclosureService {
   // Méthode modifiable qui permet d'aller chercher les données du capteur pour l'emplacement des filament. Définit dans enclosure.octoprint.services.ts
   abstract getTemperatureSetValue(identifier: number): Observable<number>;
 
-  abstract getEnclosureStatusSubscribable(): Observable<EnclosureStatus>;
-
   /* 
   * @brief: Méthode modifiable qui permet d'ajuster la température désirée dans OctoPrint pour un élément chauffant. Définit dans enclosure.octoprint.services.ts
   * @param identifier: ID de l'élément chauffant qu'on lui applique une température cible
   * @param temperature: Température cible que l'élément chauffant doit atteindre
   */
   abstract setTemperatureHeater(identifier: number, temperature: number): void;
+
+  abstract getEnclosureStatusSubscribable(): Observable<EnclosureStatus>;
 
   abstract setLEDColor(identifier: number, red: number, green: number, blue: number): void;
 

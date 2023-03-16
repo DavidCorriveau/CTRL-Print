@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { ConfigService } from '../config/config.service';
-import { PrinterStatus, TemperatureReading } from '../model';
+import { PrinterStatus } from '../model';
 import { EnclosureStatus } from '../model/octoprint';
 import { PrinterService } from '../services/printer/printer.service';
 import { SocketService } from '../services/socket/socket.service';
@@ -14,31 +14,33 @@ import { EnclosureService } from '../services/enclosure/enclosure.service'; // P
   styleUrls: ['./printer-status.component.scss'],
 })
 export class PrinterStatusComponent implements OnInit, OnDestroy {
-  private subscriptions: Subscription = new Subscription();
-  public printerStatus: PrinterStatus;
-  public fanSpeed: number;
-  public status: string;
+  private subscriptions: Subscription = new Subscription(); // Pour ajouter des lectures automatiques
+  public printerStatus: PrinterStatus;  // Contient les informations de l'imprimante
 
-  public hotendTarget: number;
+  public fanSpeed: number; // Vitesse du ventilateur près de la buse de l'imprimante
+
+  public idealTemperatureStorage = 50;  // Température idéal pour l'emplacement des filaments
+  public idealTemperatureEnclosure = 25;  // Température idéal pour l'enceinte
+
+  public hotendTarget: number;  // Température cible qui va être changé pour la buse de l'imprimante
   public heatbedTarget: number;
   public fanTarget: number;
+  public enclosureTarget: number = this.idealTemperatureEnclosure; // Variable qui contient la température cible qui va être changé pour le boitier
+  public storageTarget: number = this.idealTemperatureStorage; // Variable qui contient la température cible qui va être changé de l'emplacement des filaments
 
   public QuickControlView = QuickControlView;
   public view = QuickControlView.NONE;
 
-  public idealTemperatureFilaments = 50;  // Température idéal pour l'emplacement des filaments
-  public idealTemperatureEnclosure = 25;  // Température idéal pour l'enceinte
   public valeurChangePourDefaut = -999; // Valeur pour changer entre le minimum et le maximum
 
-  public enclosureTarget: number = this.idealTemperatureEnclosure; // Variable qui contient la température cible du boitier
-  public storageTarget: number = this.idealTemperatureFilaments; // Variable qui contient la température cible de l'emplacement des filaments
-  public enclosureStatus: EnclosureStatus;  // Objet qui contient les informations de l'enceinte
+  public enclosureStatus: EnclosureStatus;  // Objet qui contient les informations de l'enceinte au complet
+
+  private printerService: PrinterService;
 
   public constructor(
-    private printerService: PrinterService,
-    private configService: ConfigService,
     private socketService: SocketService,
-    private enclosureService: EnclosureService, // Instencie un objet EnclosureService
+    private enclosureService: EnclosureService,
+    private configService: ConfigService,
   ) {
     this.hotendTarget = this.configService.getDefaultHotendTemperature();
     this.heatbedTarget = this.configService.getDefaultHeatbedTemperature();
@@ -88,8 +90,8 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
    * @brief: Méthode qui fait aparaitre le menu de contrôle pour la température de l'emplacement des filaments
    * @aucun: aucun
    */
-  public showQuickControlFilaments(): void {
-    this.view = QuickControlView.FILAMENTS; // Règle l'affichage pour celui de l'espace des filaments
+  public showQuickControlStorage(): void {
+    this.view = QuickControlView.STORAGE; // Règle l'affichage pour celui de l'espace des filaments
     this.showQuickControl();  // Affiche le menu de paramétrage
   }
 
@@ -130,8 +132,8 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
       case QuickControlView.ENCLOSURE:  // Si l'affichage de controle est celui pour le boitier
         this.changeTemperatureEnclosure(value); // Appel la méthode pour changer la température cible du boitier en additionnant avec la valeur passée en paramètre
         break;
-      case QuickControlView.FILAMENTS:  // Si l'affichage de controle est celui pour l'emplacement des filaments
-        this.changeTemperatureFilaments(value); // Appel la méthode pour changer la température cible de l'emplacement des filaments en additionnant avec la valeur passée en paramètre
+      case QuickControlView.STORAGE:  // Si l'affichage de controle est celui pour l'emplacement des filaments
+        this.changeTemperatureStorage(value); // Appel la méthode pour changer la température cible de l'emplacement des filaments en additionnant avec la valeur passée en paramètre
         break;
     }
   }
@@ -154,8 +156,8 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
       case QuickControlView.ENCLOSURE:  // Si l'affichage de controle est celui pour le boitier
         this.setTemperatureEnclosure(); // Appel la méthode pour changer la température appliquée par celle cible pour le boitier
         break;
-      case QuickControlView.FILAMENTS:  // Si l'affichage de controle est celui pour l'emplacement des filaments
-        this.setTemperatureFilaments(); // Appel la méthode pour changer la température appliquée par celle cible pour l'emplacement des filaments
+      case QuickControlView.STORAGE:  // Si l'affichage de controle est celui pour l'emplacement des filaments
+        this.setTemperatureStorage(); // Appel la méthode pour changer la température appliquée par celle cible pour l'emplacement des filaments
          break;
     }
   }
@@ -212,10 +214,10 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
    * @brief: Méthode qui change la température cible pour l'emplacement des filaments
    * @param value: Contient la valeur qui sera additionné avec celle cible
    */
-  private changeTemperatureFilaments(value: number): void {
+  private changeTemperatureStorage(value: number): void {
     this.storageTarget += value;  // Additionne la valeur à la température cible
     if (this.storageTarget < this.valeurChangePourDefaut) { // Si la température cible est plus petite que celle pour indiquer de changer pour la température maximum
-      this.storageTarget = this.idealTemperatureFilaments;  // Met la température cible égale à la température idéal
+      this.storageTarget = this.idealTemperatureStorage;  // Met la température cible égale à la température idéal
     } else if (this.storageTarget < this.enclosureStatus.storage.temperature.min) { // Si la température cible est plus petite que son minimum
       this.storageTarget = this.enclosureStatus.storage.temperature.min;  // Met la température cible à son minimum
     } else if (this.storageTarget > this.enclosureStatus.storage.temperature.max) { // Si la température cible est plus grande que son maximum
@@ -251,7 +253,7 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
    * @brief: Méthode qui met la température appliquée de l'emplacement des filaments égale à celle cible
    * @param: aucun
    */
-  private setTemperatureFilaments(): void {
+  private setTemperatureStorage(): void {
     this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(),this.storageTarget);  // Envoie la température de l'emplacement des filament souhaité au plugin Enclosure pour qu'il agit avec l'élément chauffant
     this.hideQuickControl();  // Ferme l'affichage de paramétrage de la température
   }
@@ -263,5 +265,5 @@ enum QuickControlView {
   HEATBED,
   FAN,
   ENCLOSURE,
-  FILAMENTS
+  STORAGE
 }
