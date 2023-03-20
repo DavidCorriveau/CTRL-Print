@@ -47,7 +47,7 @@ Exemple: le capteur physique pour l'enceinte a l'ID 1 dans Octoprint. Alors, met
    
    
 
-##Quoi modifier dans le code pour afficher un autre capteur
+## Quoi modifier dans le code pour afficher un autre capteur
 
 1. ajouter une variable qui contiendera le numéro d'ID du capteur dans l'interface EnclosurePlugin dans le fichier /config/config.model.ts et dans le fichier /config/config.default.ts.
 
