@@ -1,7 +1,7 @@
 # Dossier contenant les différentes fenêtres de l'application. Il contient aussi des fichier pour le fonctionnement de l'application
 
 ## Explications des dossiers qu'on a modifiés
-bottom-bar: Affiche le nom de l'imprimante et son état (connecté, en train d'imprimer, etc.). On a réduit l'espace vertical que cette page prenait dans le menu principale
+bottom-bar: Affiche le nom de l'imprimante et son état (connecté, en train d'imprimer, etc.).
 
 config: Contient toutes les paramètres modifiables de l'application. Il y a des paramètres par défaut. La fenêtre de paramètre change la configuration et elle se trouve dans un autre dossier qui settings
 
