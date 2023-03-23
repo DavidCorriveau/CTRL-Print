@@ -38,6 +38,12 @@ interface DefaultTemperatureFanSpeed {
   fan: number;
 }
 
+// Interface pour la température par défaut dans l'enceinte
+interface DefaultTemperatureEnclosure {
+  enclosure: number;  // Température par défaut de l'emplacement de l'imprimante
+  storage: number;    // Température par défaut de l'emplacement des filaments
+}
+
 interface Filament {
   thickness: number;
   density: number;
@@ -67,8 +73,9 @@ interface Plugin {
 }
 
 interface EnclosurePlugin extends Plugin {
-  ambientSensorID: number | null; // Variable qui contient l'ID du capteur dans Octoprint qui sera dans l'enceinte avec l'imprimante 3D
-  storageSensorID: number | null; // Variable qui contient l'ID du capteur dans Octoprint qui sera dans l'emplacement des filaments
+  ambientSensorID: number; // Variable qui contient l'ID du capteur dans Octoprint qui sera dans l'enceinte avec l'imprimante 3D
+  storageSensorID: number; // Variable qui contient l'ID du capteur dans Octoprint qui sera dans l'emplacement des filaments
+  defaultTemperature: DefaultTemperatureEnclosure;  // Interface qui contient les températures par défaut de l'enceinte 
 }
 
 interface PSUControlPlugin extends Plugin {

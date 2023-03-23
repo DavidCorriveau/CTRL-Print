@@ -19,14 +19,11 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
 
   public fanSpeed: number; // Vitesse du ventilateur près de la buse de l'imprimante
 
-  public idealTemperatureStorage = 50;  // Température idéal pour l'emplacement des filaments
-  public idealTemperatureEnclosure = 25;  // Température idéal pour l'enceinte
-
   public hotendTarget: number;  // Température cible qui va être changé pour la buse de l'imprimante
   public heatbedTarget: number;
   public fanTarget: number;
-  public enclosureTarget: number = this.idealTemperatureEnclosure; // Variable qui contient la température cible qui va être changé pour le boitier
-  public storageTarget: number = this.idealTemperatureStorage; // Variable qui contient la température cible qui va être changé de l'emplacement des filaments
+  public enclosureTarget: number; // Variable qui contient la température cible qui va être changé pour le boitier
+  public storageTarget: number; // Variable qui contient la température cible qui va être changé de l'emplacement des filaments
 
   public QuickControlView = QuickControlView;
   public view = QuickControlView.NONE;
@@ -35,9 +32,8 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
 
   public enclosureStatus: EnclosureStatus;  // Objet qui contient les informations de l'enceinte au complet
 
-  private printerService: PrinterService;
-
   public constructor(
+    private printerService: PrinterService,
     private socketService: SocketService,
     private enclosureService: EnclosureService,
     private configService: ConfigService,
@@ -45,6 +41,8 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
     this.hotendTarget = this.configService.getDefaultHotendTemperature();
     this.heatbedTarget = this.configService.getDefaultHeatbedTemperature();
     this.fanTarget = this.configService.getDefaultFanSpeed();
+    this.enclosureTarget = this.configService.getDefaultEnclosureTemperature();
+    this.storageTarget = this.configService.getDefaultStorageTemperature();
   }
 
   public ngOnInit(): void {
@@ -202,7 +200,7 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
   private changeTemperatureEnclosure(value: number): void {
     this.enclosureTarget += value;  // Additionne la valeur à la température cible
     if (this.enclosureTarget < this.valeurChangePourDefaut) { // Si la température cible est plus petite que celle pour indiquer de changer pour la température maximum
-      this.enclosureTarget = this.idealTemperatureEnclosure;  // Met la température cible égale à la température idéal
+      this.enclosureTarget = this.configService.getDefaultEnclosureTemperature();  // Met la température cible égale à la température idéal
     } else if (this.enclosureTarget < this.enclosureStatus.enclosure.temperature.min) { // Si la température cible est plus petite que son minimum
       this.enclosureTarget = this.enclosureStatus.enclosure.temperature.min;  // Met la température cible à son minimum
     } else if (this.enclosureTarget > this.enclosureStatus.enclosure.temperature.max) { // Si la température cible est plus grande que son maximum
@@ -217,7 +215,7 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
   private changeTemperatureStorage(value: number): void {
     this.storageTarget += value;  // Additionne la valeur à la température cible
     if (this.storageTarget < this.valeurChangePourDefaut) { // Si la température cible est plus petite que celle pour indiquer de changer pour la température maximum
-      this.storageTarget = this.idealTemperatureStorage;  // Met la température cible égale à la température idéal
+      this.storageTarget = this.configService.getDefaultStorageTemperature();  // Met la température cible égale à la température idéal
     } else if (this.storageTarget < this.enclosureStatus.storage.temperature.min) { // Si la température cible est plus petite que son minimum
       this.storageTarget = this.enclosureStatus.storage.temperature.min;  // Met la température cible à son minimum
     } else if (this.storageTarget > this.enclosureStatus.storage.temperature.max) { // Si la température cible est plus grande que son maximum

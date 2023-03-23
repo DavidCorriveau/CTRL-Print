@@ -55,6 +55,26 @@ export class ConfigService {
     this.electronService.send('readConfig');
   }
 
+  // Méthode qui va récupérer l'ID paramétré dans OctoDash du capteur pour l'enceinte
+  public getAmbientTemperatureSensorName(): number {
+    return this.config.plugins.enclosure.ambientSensorID;
+  }
+
+  // Méthode qui va récupérer l'ID paramétré dans OctoDash du capteur pour l'emplacement des filaments
+  public getStorageTemperatureSensorName(): number {
+    return this.config.plugins.enclosure.storageSensorID;
+  }
+
+  // Méthode qui va récupérer la température par défaut de l'emplacement de l'imprimante
+  public getDefaultEnclosureTemperature(): number {
+    return this.config.plugins.enclosure.defaultTemperature.enclosure;
+  }
+
+  // Méthode qui va récupérer la température par défaut de l'emplacement des filaments
+  public getDefaultStorageTemperature(): number {
+    return this.config.plugins.enclosure.defaultTemperature.storage;
+  }
+
   private initialize(config: Config): void {
     this.config = config;
     this.electronService.send('checkConfig', config);
@@ -163,16 +183,6 @@ export class ConfigService {
 
   public isTouchscreen(): boolean {
     return this.config.octodash.touchscreen;
-  }
-
-  // Méthode qui va récupérer l'ID paramétré dans OctoDash du capteur pour l'enceinte
-  public getAmbientTemperatureSensorName(): number {
-    return this.config.plugins.enclosure.ambientSensorID;
-  }
-
-  // Méthode qui va récupérer l'ID paramétré dans OctoDash du capteur pour l'emplacement des filaments
-  public getStorageTemperatureSensorName(): number {
-    return this.config.plugins.enclosure.storageSensorID;
   }
 
   public getAutomaticScreenSleep(): boolean {

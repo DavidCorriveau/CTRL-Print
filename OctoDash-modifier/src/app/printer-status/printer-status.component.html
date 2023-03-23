@@ -73,7 +73,7 @@
     <!-- Une case qui agit comme un bouton qui appel la méthode pour afficher le controle de l'emplacement des filaments -->
     <td
     class="printer-status__value printer-status__value-5"
-    (click)="showQuickControlFilaments()"
+    (click)="showQuickControlStorage()"
     matRipple
     [matRippleUnbounded]="false"
   >
@@ -118,7 +118,7 @@
               ? 'heat-bed.svg'
               : view === QuickControlView.ENCLOSURE
               ? 'enclosure.svg'
-              : view === QuickControlView.FILAMENTS
+              : view === QuickControlView.STORAGE
               ? 'filaments_3D.svg'
               : 'fan.svg')
           "

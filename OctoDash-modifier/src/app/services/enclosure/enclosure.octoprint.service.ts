@@ -35,26 +35,26 @@ export class EnclosureOctoprintService extends EnclosureService {
     private http: HttpClient,
   ) {
     super();
-    this.enclosureStatusSubject = new Subject<EnclosureStatus>();
-    this.enclosureStatus = {
-      enclosure: {
+    this.enclosureStatusSubject = new Subject<EnclosureStatus>(); // Crée un Subject de type EnclosureStatus pour qu'il partage ces informations avec d'autres fenêtres
+    this.enclosureStatus = {  // Crée une variable qui contient les informations en tant réel de l'enceinte
+      enclosure: {  // Contient les informations de l'emplacement de l'imprimante
         temperature: {
-          current: 0,
-          set: 0,
-          min: 0,
-          max: 50,
+          current: 0, // Contient la température actuelle
+          set: 0, // Contient la température cible 
+          min: 0, // Contient le minimum admisible pour la température cible
+          max: 50,  // Contient le maximum admisible pour la température cible
         }
       },
-      storage: {
+      storage: {  // Contient les informations de l'emplacement des filaments
         temperature: {
-          current: 0,
-          set: 0,
-          min: 0,
-          max: 90,
+          current: 0, // Contient la température actuelle
+          set: 0, // Contient la température cible
+          min: 0, // Contient le minimum admisible pour la température cible
+          max: 90,  // Contient le maximum admisible pour la température cible
         }
       },
     } as EnclosureStatus;
-
+    setTimeout(() => {},50000);
     this.subscriptions.add(
       timer(0,1000).subscribe(() => {
         this.getEnclosureTemperature(this.configService.getAmbientTemperatureSensorName()).subscribe({ // ajoute une lecture des données du capteur du boitier
@@ -118,44 +118,50 @@ export class EnclosureOctoprintService extends EnclosureService {
   }
   // Definition de la méthode pour qu'il récupère les données du capteur de l'enceinte des filaments dans OctoPrint
   getEnclosureTemperature(identifier: number): Observable<TemperatureReading> {
-    return this.http
-      .get(
-        this.configService.getApiURL(
-          'plugin/enclosure/inputs/' + identifier,
-          false,
-        ),
-        this.configService.getHTTPHeaders(),
-      )
-      .pipe(
-        map((data: EnclosurePluginOutputAPI) => {
-          return {
-            temperature: data.temp_sensor_temp,
-            humidity: data.temp_sensor_humidity,
-            unit: data.use_fahrenheit ? '°F' : '°C',
-          } as TemperatureReading;
-        }),
-      );
+    if(identifier != undefined)
+    {
+      return this.http
+        .get(
+          this.configService.getApiURL(
+            'plugin/enclosure/inputs/' + identifier,
+            false,
+          ),
+          this.configService.getHTTPHeaders(),
+        )
+        .pipe(
+          map((data: EnclosurePluginOutputAPI) => {
+            return {
+              temperature: data.temp_sensor_temp,
+              humidity: data.temp_sensor_humidity,
+              unit: data.use_fahrenheit ? '°F' : '°C',
+            } as TemperatureReading;
+          }),
+        );
+    }
   }
 
+  // Définition de la méthode pour qu'elle récupère la température cible dans OctoPrint
   getTemperatureSetValue(identifier: number): Observable<number>
   {
-    return this.http
-      .get(
-        this.configService.getApiURL(
-          'plugin/enclosure/outputs/' + identifier,
-          false,
-        ),
-        this.configService.getHTTPHeaders(),
-      )
-      .pipe(
-        map((data: EnclosurePluginOutputAPI) => {
-          return data.temp_ctr_set_value
-        }),
-      );
-
+    if(identifier != undefined)
+    {
+      return this.http
+        .get(
+          this.configService.getApiURL(
+            'plugin/enclosure/outputs/' + identifier,
+            false,
+          ),
+          this.configService.getHTTPHeaders(),
+        )
+        .pipe(
+          map((data: EnclosurePluginOutputAPI) => {
+            return data.temp_ctr_set_value
+          }),
+        );
+    }
   }
 
-  // Definition de la méthode pour qu'il récupère les données du capteur de l'emplacement des filaments dans OctoPrint
+  // Definition de la méthode pour qu'il récupère les données d'un capteur dans OctoPrint
   getStorageTemperature(): Observable<TemperatureReading> {
     return this.http
       .get(
