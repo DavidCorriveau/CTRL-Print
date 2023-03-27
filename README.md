@@ -16,7 +16,7 @@ Contient les fichiers qui doivent être compressé en un fichier .asar et transf
 ## Procédure pour compiler l'application
 
 Il faut compilé le projet Angular en premier. Pour compiler le projet, il faut suivre ces étapes:
-1. Il faut ouvrir le dossier Octodash modifier dans VSCode.
+1. Il faut ouvrir le dossier Octodash-modifier dans VSCode.
 2. Ouvrir un terminal en bash
 3. il faut installer Angular CLI dans le terminal ouvert si ce n'est pas fait. npm install -g @angular/cli. Possible qu'il faut faire d'autre manipulation pour que les commandes fonctionnent.
 4. Ensuite, il suffit d'entrer la commande ng build. Cette commande va ajouter un dossier dist au projet avec les fichiers compilés.
