@@ -1,9 +1,9 @@
 # Dossier contenant les différentes fenêtres de l'application. Il contient aussi des fichier pour le fonctionnement de l'application
 
 ## Explications des dossiers qu'on a modifiés
-bottom-bar: Affiche le nom de l'imprimante et son état (connecté, en train d'imprimer, etc.).
+bottom-bar (modifié): Affiche le nom de l'imprimante et son état (connecté, en train d'imprimer, etc.).
 
-config: Contient toutes les paramètres modifiables de l'application. Il y a des paramètres par défaut. La fenêtre de paramètre change la configuration et elle se trouve dans un autre dossier qui settings
+config (modifié): Contient toutes les paramètres modifiables de l'application. Il y a des paramètres par défaut. La fenêtre de paramètre change la configuration et elle se trouve dans un autre dossier qui settings
 
 control: Menu qui permet de controler la buse de l'imprimante. Permet aussi d'exécuter des commandes personnalisables.
 
@@ -19,19 +19,19 @@ main-menu: Contient les trois gros boutons pour aller dans les menu des fichiers
 
 main-screen: Contient les fenêtres utilisés pour le menu principale.
 
-model: Contient les différentes interfaces typescript créées.
+model (modifié): Contient les différentes interfaces typescript créées.
 
 notification: S'occupe d'afficher les notifications dans l'application lorsqu'il y a une qui est envoyé.
 
 notification-center: Menu qui affiches toutes les notifications. Affiche aussi les commandes personalisables.
 
-print-control: Menu qui permet d'arrêter une impression, de la mettre en pause ou ajuster des paramètres lors d'une impression.
+print-control (modifié): Menu qui permet d'arrêter une impression, de la mettre en pause ou ajuster des paramètres lors d'une impression.
 
-printer-status: Affiche les températures de l'imprimante et de l'enceinte. Contient des boutons pour aller les modifiées.
+printer-status (modifié): Affiche les températures de l'imprimante et de l'enceinte. Contient des boutons pour aller les modifiées.
 
-services: Contient les différents service Angular utilisé par l'application.
+services (modifié): Contient les différents service Angular utilisé par l'application.
 
-settings: Menu des paramètres de l'application.
+settings (modifié): Menu des paramètres de l'application.
 
 toggle-switch: Utilise l'animation toggle-switch
 
