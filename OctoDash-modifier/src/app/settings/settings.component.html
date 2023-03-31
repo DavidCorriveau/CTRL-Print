@@ -488,6 +488,36 @@
             </span>
             <span class="settings__checkbox-descriptor" i18n="@@settings-enclosure-enabled">enabled</span>
           </div>
+
+          <!-- Texte pour identifier que c'est la section pour les températures par défauts de l'enceinte-->
+          <label for="enclosure-default-temperature" class="settings__input-label">
+            Default Temperature Enclosure
+            <span>(°C)</span>
+          </label>
+          <!-- Zone de texte pour entré une température par défaut pour l'emplacement de l'imprimante-->
+          <input
+            type="number"
+            id="defaultEnclosureTemperature"
+            class="settings__input"
+            name="defaultEnclosureTemperature"
+            style="width: 44.94vw"
+            [(ngModel)]="this.config.plugins.enclosure.defaultTemperature.enclosure"
+            required />
+          <!-- Texte pour identifier que c'est la section pour les températures par défauts de l'enceinte-->
+          <label for="enclosure-default-temperature" class="settings__input-label">
+            Default Temperature Storage
+            <span>(°C)</span>
+          </label>
+          <!-- Zone de texte pour entré une température par défaut pour l'emplacement de l'imprimante-->
+          <input
+            type="number"
+            id="defaultStorageTemperature"
+            class="settings__input"
+            name="defaultStorageTemperature"
+            style="width: 44.94vw"
+            [(ngModel)]="this.config.plugins.enclosure.defaultTemperature.storage"
+            required />
+
           <!-- Ajout d'un texte pour indiquer que la zone de texte en dessous est la valeur pour l'ID du capteur pour l'enceinte -->
           <label for="enclosure-ambient-id" class="settings__input-label" i18n="@@settings-ambiant-sensor">
             Ambient Sensor
@@ -503,6 +533,20 @@
             [(ngModel)]="config.plugins.enclosure.ambientSensorID"
             required
             [disabled]="!config.plugins.enclosure.enabled" />
+          <tr>
+            <td>
+              <button
+              class="settings-Button_text_input"
+              (click)="changeValueAmbientSensor(0)"
+              >0</button>
+            </td>
+            <td>
+              <button
+              class="settings-Button_text_input"
+              (click)="changeValueAmbientSensor(1)"
+              >1</button>
+            </td>
+          </tr>
             <!-- Ajout d'un texte pour indiquer que la zone de texte en dessous est la valeur pour l'ID du capteur pour l'emplacement des filaments -->
             <label for="enclosure-storage-id" class="settings__input-label" i18n="@@settings-storage-sensor">
               Storage Sensor

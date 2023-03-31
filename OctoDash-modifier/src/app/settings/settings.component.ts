@@ -56,6 +56,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }, 400);
   }
 
+  public changeValueAmbientSensor(valeur: number): void {
+    this.config.plugins.enclosure.ambientSensorID = valeur;
+  }
+
   public ngOnDestroy(): void {
     this.electronService.removeListener('configSaved', this.onConfigSaved.bind(this));
     this.electronService.removeListener('configSaveFail', this.onConfigSaveFail.bind(this));
