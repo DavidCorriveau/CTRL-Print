@@ -17,7 +17,7 @@ Contient les fichiers qui doivent être compressé en un fichier .asar et transf
 1. Ouvrir le dossier Octodash-modifier dans VSCode.
 2. Ouvrir un terminal dans VSCode à l'aide de l'onglet Terminal qui se trouve en haut. ![image](https://user-images.githubusercontent.com/89463135/229137042-135e6e43-b1c0-4829-9986-2d3fffe35966.png)
 3. Sélectionner un terminal en bash. ![image](https://user-images.githubusercontent.com/89463135/229138341-85dd592d-62f1-4454-bf8e-0abf215230b9.png)
-4. Installer Angular CLI dans le terminal ouvert si ce n'est pas fait. npm install -g @angular/cli. Cela permettera de compilé tous les fichiers du programme. Possible qu'il faut faire d'autre manipulation pour que les commandes fonctionnent.
+4. Installer Angular CLI dans le terminal ouvert si ce n'est pas fait. npm install -g @angular/cli. Cela permettera de compilé tous les fichiers du programme.
 5. Dand le terminal bash dans VSCode, entrez la commande ng build pour commencer la compilation du programme.
 6. Après, un dossier dist apparait dans le dossier Octodash-modifier. Il faut transférer tous les fichiers du dossier dist dans le dossier /CTRL-Pint/app/dist et ensuite dans le dossier associé à la langue de votre raspberry (en pour anglais, fr pour français).![image](https://user-images.githubusercontent.com/89463135/229141267-49f951ae-d31a-4668-bbdd-5c8941d70087.png)  ![image](https://user-images.githubusercontent.com/89463135/229146206-f04cc97f-9d2d-4216-9a31-42091a0e106b.png)
 7. Ouvrez un terminal dans le dossier /CTRL-Print/app.
