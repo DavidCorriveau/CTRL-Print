@@ -72,7 +72,7 @@ export class PrintControlComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(),0);
+    this.enclosureService.setTemperatureHeater(this.configService.getEnclosureTemperatureSensorName(),0);
     this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(),0);
     this.subscriptions.unsubscribe();
   }
@@ -278,7 +278,7 @@ export class PrintControlComponent implements OnInit, OnDestroy {
       this.printerService.setTemperatureBed(this.temperatureHeatbed);
       this.printerService.setFeedrate(this.feedrate);
       this.printerService.setFanSpeed(this.fanSpeed);
-      this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(),this.enclosureTarget);  // Applique la nouvelle température désirée pour le boiter au controle de l'éléments chauffant
+      this.enclosureService.setTemperatureHeater(this.configService.getEnclosureTemperatureSensorName(),this.enclosureTarget);  // Applique la nouvelle température désirée pour le boiter au controle de l'éléments chauffant
       this.enclosureService.setTemperatureHeater(this.configService.getStorageTemperatureSensorName(),this.storageTarget);  // Applique la nouvelle température désirér pour l'emplacement des filaments au controle de l'éléments chauffant
       this.hideControlOverlay(event);
     }

@@ -65,6 +65,7 @@ import { ToggleSwitchComponent } from './shared/toggle-switch/toggle-switch.comp
 import { StandbyComponent } from './standby/standby.component';
 import { UpdateComponent } from './update/update.component';
 import { URLSafePipe } from './url.pipe';
+import { CustomKeyboardComponent } from './custom-keyboard/custom-keyboard.component';
 
 export function playerFactory(): LottiePlayer {
   return player;
@@ -105,6 +106,7 @@ export function playerFactory(): LottiePlayer {
     CustomActionsComponent,
     ToggleSwitchComponent,
     NotificationCenterComponent,
+    CustomKeyboardComponent,
   ],
   imports: [
     AppRoutingModule,

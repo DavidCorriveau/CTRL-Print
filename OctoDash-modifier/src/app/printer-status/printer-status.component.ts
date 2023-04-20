@@ -243,7 +243,7 @@ export class PrinterStatusComponent implements OnInit, OnDestroy {
    * @param: aucun
    */
   private setTemperatureEnclosure(): void {
-    this.enclosureService.setTemperatureHeater(this.configService.getAmbientTemperatureSensorName(),this.enclosureTarget);  // Envoie la température de l'enceinte souhaité au plugin Enclosure pour qu'il agit avec l'élément chauffant
+    this.enclosureService.setTemperatureHeater(this.configService.getEnclosureTemperatureSensorName(),this.enclosureTarget);  // Envoie la température de l'enceinte souhaité au plugin Enclosure pour qu'il agit avec l'élément chauffant
     this.hideQuickControl();  // Ferme l'affichage de paramétrage de la température
   }
 

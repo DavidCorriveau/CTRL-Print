@@ -503,6 +503,9 @@
             style="width: 44.94vw"
             [(ngModel)]="this.config.plugins.enclosure.defaultTemperature.enclosure"
             required />
+
+          <app-custom-keyboard (buttonClick)="changeDefaultEnclosureValue($event)"></app-custom-keyboard>
+
           <!-- Texte pour identifier que c'est la section pour les températures par défauts de l'enceinte-->
           <label for="enclosure-default-temperature" class="settings__input-label">
             Default Temperature Storage
@@ -517,52 +520,45 @@
             style="width: 44.94vw"
             [(ngModel)]="this.config.plugins.enclosure.defaultTemperature.storage"
             required />
+          
+          <app-custom-keyboard (buttonClick)="changeDefaultStorageValue($event)"></app-custom-keyboard>
 
           <!-- Ajout d'un texte pour indiquer que la zone de texte en dessous est la valeur pour l'ID du capteur pour l'enceinte -->
-          <label for="enclosure-ambient-id" class="settings__input-label" i18n="@@settings-ambiant-sensor">
-            Ambient Sensor
+          <label for="enclosure-enclosure-id" class="settings__input-label" i18n="@@settings-ambiant-sensor">
+            Enclosure Sensor
             <span>(ID)</span>
           </label>
           <!-- Zone de texte qui autorise seulement les chiffes et qui attribut la valeur entrée au ID du capteur pour l'enceinte -->
           <input
             type="number"
-            id="enclosure-ambient-id"
+            id="enclosure-enclosure-id"
             class="settings__input"
-            name="enclosure-ambient-id"
+            name="enclosure-enclosure-id"
             style="width: 44.94vw"
-            [(ngModel)]="config.plugins.enclosure.ambientSensorID"
+            [(ngModel)]="config.plugins.enclosure.enclosureSensorID"
             required
             [disabled]="!config.plugins.enclosure.enabled" />
-          <tr>
-            <td>
-              <button
-              class="settings-Button_text_input"
-              (click)="changeValueAmbientSensor(0)"
-              >0</button>
-            </td>
-            <td>
-              <button
-              class="settings-Button_text_input"
-              (click)="changeValueAmbientSensor(1)"
-              >1</button>
-            </td>
-          </tr>
-            <!-- Ajout d'un texte pour indiquer que la zone de texte en dessous est la valeur pour l'ID du capteur pour l'emplacement des filaments -->
-            <label for="enclosure-storage-id" class="settings__input-label" i18n="@@settings-storage-sensor">
-              Storage Sensor
-              <span>(ID)</span>
-            </label>
-            <!-- Zone de texte qui autorise seulement les chiffes et qui attribut la valeur entrée au ID du capteur pour l'emplacement des filaments -->
-            <input
-              type="number"
-              id="enclosure-storage-id"
-              class="settings__input"
-              name="enclosure-storage-id"
-              style="width: 44.94vw"
-              [(ngModel)]="config.plugins.enclosure.storageSensorID"
-              required
-              [disabled]="!config.plugins.enclosure.enabled" />
 
+          <app-custom-keyboard (buttonClick)="changeValueEnclosureSensor($event)"></app-custom-keyboard>
+
+          <!-- Ajout d'un texte pour indiquer que la zone de texte en dessous est la valeur pour l'ID du capteur pour l'emplacement des filaments -->
+          <label for="enclosure-storage-id" class="settings__input-label" i18n="@@settings-storage-sensor">
+            Storage Sensor
+            <span>(ID)</span>
+          </label>
+          <!-- Zone de texte qui autorise seulement les chiffes et qui attribut la valeur entrée au ID du capteur pour l'emplacement des filaments -->
+          <input
+            type="number"
+            id="enclosure-storage-id"
+            class="settings__input"
+            name="enclosure-storage-id"
+            style="width: 44.94vw"
+            [(ngModel)]="config.plugins.enclosure.storageSensorID"
+            required
+            [disabled]="!config.plugins.enclosure.enabled" />
+
+          <app-custom-keyboard (buttonClick)="changeValueStorageSensor($event)"></app-custom-keyboard>
+          
           <span class="settings__heading-2" i18n="@@settings-filament-manager">Filament Manager</span>
           <div
             class="settings__checkbox-container"

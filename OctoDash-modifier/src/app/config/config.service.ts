@@ -56,8 +56,8 @@ export class ConfigService {
   }
 
   // Méthode qui va récupérer l'ID paramétré dans OctoDash du capteur pour l'enceinte
-  public getAmbientTemperatureSensorName(): number {
-    return this.config.plugins.enclosure.ambientSensorID;
+  public getEnclosureTemperatureSensorName(): number {
+    return this.config.plugins.enclosure.enclosureSensorID;
   }
 
   // Méthode qui va récupérer l'ID paramétré dans OctoDash du capteur pour l'emplacement des filaments

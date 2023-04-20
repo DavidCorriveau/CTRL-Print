@@ -57,7 +57,7 @@ export class EnclosureOctoprintService extends EnclosureService {
     setTimeout(() => {},50000);
     this.subscriptions.add(
       timer(0,1000).subscribe(() => {
-        this.getEnclosureTemperature(this.configService.getAmbientTemperatureSensorName()).subscribe({ // ajoute une lecture des données du capteur du boitier
+        this.getEnclosureTemperature(this.configService.getEnclosureTemperatureSensorName()).subscribe({ // ajoute une lecture des données du capteur du boitier
           next: (temperatureReading: TemperatureReading) => (this.enclosureStatus.enclosure.temperature.current = temperatureReading.temperature), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
           error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
             this.notificationService.setNotification({
@@ -84,7 +84,7 @@ export class EnclosureOctoprintService extends EnclosureService {
           },
         });
 
-        this.getTemperatureSetValue(this.configService.getAmbientTemperatureSensorName()).subscribe({ // ajoute une lecture des données du capteur du boitier
+        this.getTemperatureSetValue(this.configService.getEnclosureTemperatureSensorName()).subscribe({ // ajoute une lecture des données du capteur du boitier
           next: (temperature: number) => (this.enclosureStatus.enclosure.temperature.set = temperature), // Met les données du capteurs dans la varibale temperatureReading de type temperatureReading crée dans une variable locale
           error: (error: HttpErrorResponse) => {  // Si il y a une erreur, affiche une notification à l'écran
             this.notificationService.setNotification({

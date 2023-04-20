@@ -1,5 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { AppService } from '../app.service';
 import { Config } from '../config/config.model';
 import { ConfigService } from '../config/config.service';
@@ -19,6 +18,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   @ViewChild('settingsOctoDash') private settingsOctoDash: ElementRef;
   @ViewChild('settingsPlugins') private settingsPlugins: ElementRef;
   @ViewChild('settingsCredits') private settingsCredits: ElementRef;
+  @Input() keyboardHTML: string;
 
   public fadeOutAnimation = false;
   public config: Config;
@@ -56,8 +56,44 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }, 400);
   }
 
-  public changeValueAmbientSensor(valeur: number): void {
-    this.config.plugins.enclosure.ambientSensorID = valeur;
+  public changeValue(source: string, value: string): number{
+    let stringTemporaire = "";
+    if(value != "backspace")
+    {
+      source = source + value;
+    }
+    else
+    {
+      if(source.length == 1)
+      {
+        source = '0';
+      }
+      else
+      {
+        for(let i=0; i<source.length-1;i++)
+        {
+          stringTemporaire += source[i];
+        }
+        source = stringTemporaire;
+      }
+    }
+    return +source
+  }
+
+  changeDefaultEnclosureValue(value: string): void {
+    this.config.plugins.enclosure.defaultTemperature.enclosure = this.changeValue(this.config.plugins.enclosure.defaultTemperature.enclosure.toString(),value)
+  }
+
+  changeDefaultStorageValue(value: string): void {
+    this.config.plugins.enclosure.defaultTemperature.storage = this.changeValue(this.config.plugins.enclosure.defaultTemperature.storage.toString(),value)
+  }
+
+  changeValueEnclosureSensor(value: string): void {
+    this.config.plugins.enclosure.enclosureSensorID = this.changeValue(this.config.plugins.enclosure.enclosureSensorID.toString(),value);
+  }
+
+  changeValueStorageSensor(value: string): void {
+    this.config.plugins.enclosure.storageSensorID = this.changeValue(this.config.plugins.enclosure.storageSensorID.toString(),value);
   }
 
   public ngOnDestroy(): void {

@@ -32,12 +32,15 @@ export const defaultConfig: Config = {
     },
     enclosure: {
       enabled: true,  // Active la lecture des capteurs par défaut
-      ambientSensorID: 1, // Met la valeur par défaut du capteur pour l'enceinte à 1
+      enclosureSensorID: 1, // Met la valeur par défaut du capteur pour l'enceinte à 1
       storageSensorID: 2,  // Met la valeur par défaut du capteur pour l'emplacement des filaments à 2
       defaultTemperature: {
         enclosure: 25,  // Met la température par défaut de l'emplacement de l'imprimante de 25
         storage: 50,  // Met la température par défaut de l'emplacement des filaments de 50
-      }
+      },
+      ambientSensorID: null,
+      filament1SensorID: null,
+      filament2SensorID: null,
     },
     filamentManager: {
       enabled: true,
