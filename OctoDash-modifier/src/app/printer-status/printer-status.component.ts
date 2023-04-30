@@ -1,3 +1,10 @@
+/*
+*@file printer-status.component.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Classe qui affiche les informations de températures de l'imprimante et de l'enceinte. On peut changer ces paramètres en appuyant sur les
+* boutons qui sont les icones associés à leur valeur affichée.
+*/
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 

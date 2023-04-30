@@ -1,3 +1,8 @@
+/*
+*@file files.component.ts
+*@brief Classe qui permet d'aller récupérer les fichiers d'impressions sur OctoPrint et les affiches à l'écran. Il est possible d'ajouter des 
+* filtres pour trouvé un fichier. Cette classe permet de commencer une impression.
+*/
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';

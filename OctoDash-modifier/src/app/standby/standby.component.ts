@@ -1,3 +1,7 @@
+/*
+*@file standby.component.ts
+*@brief Classe qui permet de se connecter à une imprimante.
+*/
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { AppService } from '../app.service';

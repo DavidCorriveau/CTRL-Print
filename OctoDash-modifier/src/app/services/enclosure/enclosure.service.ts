@@ -1,3 +1,9 @@
+/*
+*@file enclosure.service.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Classe utilisable ailleur pour récupérer des informations sur l'enceinte.
+*/
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 

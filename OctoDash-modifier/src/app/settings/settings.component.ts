@@ -1,3 +1,10 @@
+/*
+*@file settings.component.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Classe qui permet de configuration de l'application. On peut activer ou désactiver des plugins, changer des valeur par défaut, donner un nom
+* à l'imprimante, etc.
+*/
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { AppService } from '../app.service';
 import { Config } from '../config/config.model';

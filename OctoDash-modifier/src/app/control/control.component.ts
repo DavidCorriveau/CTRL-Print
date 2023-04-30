@@ -1,3 +1,12 @@
+/*
+*@file control.component.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Classe contenant des boutons pour controler l'imprimante. On peut bouger les trois axes du nozzle, rentrer ou retirer des filaments et exécuter
+* d'autres commandes. Les commandes exécutables de base sont faire un home à l'imprimante, faire un leveling du plateau, préchauffer, refroidir, 
+* redémarré le Raspberry Pi et éteindre le Raspberry Pi. Les distances de déplacement des nozzles sont ajustables à l'aide des boutons qui représente
+* le déplacement
+*/
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 

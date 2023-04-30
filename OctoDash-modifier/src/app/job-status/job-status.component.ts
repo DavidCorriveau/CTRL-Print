@@ -1,3 +1,7 @@
+/*
+*@file job-status.component.ts
+*@brief Classe qui indique les information de l'impression. Elle affiche le temps restant, la quantité de filament restante à utiliser
+*/
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 

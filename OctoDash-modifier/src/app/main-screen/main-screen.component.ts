@@ -1,3 +1,7 @@
+/*
+*@file main-screen.component.ts
+*@brief Classe s'occupe de l'affichage du menu principale Selon l'état de l'imprimante.
+*/
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 

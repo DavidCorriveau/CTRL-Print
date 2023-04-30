@@ -1,5 +1,11 @@
+/*
+*@file bottom-bar.component.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Classe qui affiche le nom de l'imprimante et son état dans le bas du menu principal.
+*/
 import { Component, OnDestroy } from '@angular/core';
-import { Subscription, timer } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { ConfigService } from '../config/config.service';
 import { PrinterState, PrinterStatus, TemperatureReading } from '../model';

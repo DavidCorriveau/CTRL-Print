@@ -1,3 +1,9 @@
+/*
+*@file config.models.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Classe service qui permet d'aller récupérer ou modifier les différentes configurations de l'application 
+*/
 import { HttpHeaders } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import _ from 'lodash-es';

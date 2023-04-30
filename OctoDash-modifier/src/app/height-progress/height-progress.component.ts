@@ -1,3 +1,7 @@
+/*
+*@file height-progress.component.ts
+*@brief Classe qui affiche la progression de l'impression en montrant le nombre de couche fait et le restant.
+*/
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 

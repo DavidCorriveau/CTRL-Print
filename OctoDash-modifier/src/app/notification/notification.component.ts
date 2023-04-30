@@ -1,3 +1,7 @@
+/*
+*@file notification.component.ts
+*@brief Classe qui permet de créer des notifications.
+*/
 import { Component, NgZone, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 

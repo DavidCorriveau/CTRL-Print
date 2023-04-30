@@ -1,3 +1,9 @@
+/*
+*@file main-mnenu.component.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Classe contenant les trois boutons pour accèder aux fichier d'impression, au changement de filament et au controle de l'imprimante.
+*/
 import { Component } from '@angular/core';
 
 import { AppService } from '../app.service';

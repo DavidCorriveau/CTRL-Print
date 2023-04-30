@@ -1,3 +1,10 @@
+/*
+*@file control.component.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Classe pour aller récupérer des information sur le plugin Enclosure. Elle récupère les informations des capteurs, paramètre les températures
+* voulues et d'autre action possible avec ce plugin.
+*/
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, Subject, Subscription, timer } from 'rxjs';
@@ -36,7 +43,7 @@ export class EnclosureOctoprintService extends EnclosureService {
   ) {
     super();
     this.enclosureStatusSubject = new Subject<EnclosureStatus>(); // Crée un Subject de type EnclosureStatus pour qu'il partage ces informations avec d'autres fenêtres
-    this.enclosureStatus = {  // Crée une variable qui contient les informations en tant réel de l'enceinte
+    this.enclosureStatus = {  // Crée une variable qui contient les informations actuelles de l'enceinte
       enclosure: {  // Contient les informations de l'emplacement de l'imprimante
         temperature: {
           current: 0, // Contient la température actuelle

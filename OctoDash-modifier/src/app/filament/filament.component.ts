@@ -1,3 +1,10 @@
+/*
+*@file filament.component.ts
+*@brief Classe pour pouvoir changer le filament de l'imprimante. Cette action se fait en plusieurs étapes. Le première est de sélectionner quel type
+* de filament est à changer si le plugin filament manager est activé. Si non, cette étape est ignorée. Ensuite, la buse de l'imprimante chauffe.
+* la température à atteindre peut être changée. Après, l'utilisateur doit entrer son nouveau filament dans l'imprimante. La dernière étape est
+* une petite quantité de plastique qui se fait pousser pour voir si le filament est bien rentré.
+*/
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnimationItem } from 'lottie-web';

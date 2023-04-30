@@ -1,3 +1,7 @@
+/*
+*@file notification.component.ts
+*@brief Classe qui permet d'afficher des notifications.
+*/
 import { Injectable } from '@angular/core';
 import { Observable, Observer } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';

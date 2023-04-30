@@ -1,3 +1,9 @@
+/*
+*@file config.models.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Fichier contenant les différentes interfaces pour la configuration
+*/
 import { HttpHeaders } from '@angular/common/http';
 
 export interface HttpHeader {

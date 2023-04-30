@@ -1,3 +1,9 @@
+/*
+*@file config.defaults.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Fichier contenant la configuration de base de l'application
+*/
 import { Config } from './config.model';
 
 export const defaultConfig: Config = {

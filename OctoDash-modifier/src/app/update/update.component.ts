@@ -1,3 +1,7 @@
+/*
+*@file update.component.ts
+*@brief Classe pour mettre à jour l'application
+*/
 import { Component, EventEmitter, NgZone, OnInit, Output } from '@angular/core';
 
 import { AppService } from '../app.service';

@@ -1,3 +1,10 @@
+/*
+*@file print-control.component.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Classe qui permet de controler l'imprimante lorsqu'elle est en train d'imprimer. On peut changer les températures et la vitesse
+* du ventilateur. Pour annuler l'impression, la mettre en pause, la continuer ou la recommencer.
+*/
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';

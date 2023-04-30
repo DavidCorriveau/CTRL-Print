@@ -1,3 +1,7 @@
+/*
+*@file toggle-switch.component.ts
+*@brief Classe gère les animations.
+*/
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AnimationItem } from 'lottie-web';
 import { AnimationOptions } from 'ngx-lottie';

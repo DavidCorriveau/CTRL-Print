@@ -1,3 +1,7 @@
+/*
+*@file notification-center.component.ts
+*@brief Classe qui sauvegarde les notifications
+*/
 import { Component, EventEmitter, Output } from '@angular/core';
 
 import { Notification } from '../model';

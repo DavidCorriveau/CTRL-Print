@@ -1,3 +1,9 @@
+/*
+*@file enclosure.model.ts
+*@author David Corriveau
+*@date Avril 2023
+*@brief Fichier contenant les interfaces pour les requêtes HTTP du plugin "Enclosure" et les informations des éléments de l'enceinte
+*/
 import { Temperature } from '../../index';
 
 // Interface qui contient les informations de l'enceinte
