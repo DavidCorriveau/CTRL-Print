@@ -49,13 +49,13 @@ export const defaultConfig: Config = {
       filament2SensorID: null,
     },
     filamentManager: {
-      enabled: true,
+      enabled: false,
     },
     spoolManager: {
       enabled: false,
     },
     preheatButton: {
-      enabled: true,
+      enabled: false,
     },
     printTimeGenius: {
       enabled: true,
