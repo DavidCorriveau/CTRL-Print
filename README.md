@@ -11,7 +11,7 @@ Contient tout le code qui fait fonctionner l'interface utilisateur. Cette interf
 ### 2. OctoPrint-Enclosure-master:
 Contient le code source pour le plugin Enclosure qui se trouve dans OctoPrint. C'est ce qui permet de controler les éléments chauffants et récupérer les informations des capteurs. Dossier original, rien n'a été modifié.
 ### 3. OctoPrint:
-Contient le code source de l'application OctoPrint qui permet de contrôler, sur une page web, une imprimante 3D connecté par port série à un Raspberry Pi
+Contient le code source de l'application OctoPrint qui permet de contrôler, sur une page web, une imprimante 3D connectée par port série à un Raspberry Pi.
 ### 4. app:
 Contient les fichiers qui doivent être compressé en un fichier .asar et transférer dans le Raspberry Pi pour que l'application soit utilisé par lui. Une procédure pour compresser ces fichiers est expliqué plus bas.
 
