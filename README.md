@@ -10,7 +10,9 @@
 Contient tout le code qui fait fonctionner l'interface utilisateur. Cette interface est un projet Angular qui permet de faire des applications avec plusieurs fenêtres et de permettre de passer de l'information entre elles comme par exemple des variables.
 ### 2. OctoPrint-Enclosure-master:
 Contient le code source pour le plugin Enclosure qui se trouve dans OctoPrint. C'est ce qui permet de controler les éléments chauffants et récupérer les informations des capteurs. Dossier original, rien n'a été modifié.
-### 3. app:
+### 3. OctoPrint:
+Contient le code source de l'application OctoPrint qui permet de contrôler, sur une page web, une imprimante 3D connectée par port série à un Raspberry Pi.
+### 4. app:
 Contient les fichiers qui doivent être compressé en un fichier .asar et transférer dans le Raspberry Pi pour que l'application soit utilisé par lui. Une procédure pour compresser ces fichiers est expliqué plus bas.
 
 ## Procédure pour compiler l'application
@@ -22,7 +24,8 @@ Contient les fichiers qui doivent être compressé en un fichier .asar et transf
 
 4. Installer Angular CLI dans le terminal ouvert si ce n'est pas fait. npm install -g @angular/cli. Cela permettera de compiler tous les fichiers du programme.
 5. Dans le terminal dans VSCode, entrez la commande ng build pour commencer la compilation du programme.
-6. Après, un dossier dist apparait dans le dossier Octodash-modifier. Il faut transférer tous les fichiers du dossier dist dans le dossier /CTRL-Pint/app/dist et ensuite dans le dossier associé à la langue de votre raspberry (en pour anglais, fr pour français).![image](https://user-images.githubusercontent.com/89463135/229141267-49f951ae-d31a-4668-bbdd-5c8941d70087.png)  ![image](https://user-images.githubusercontent.com/89463135/229146206-f04cc97f-9d2d-4216-9a31-42091a0e106b.png)
+6. Après, un dossier dist apparait dans le dossier Octodash-modifier. Il faut transférer tous les fichiers du dossier dist dans le dossier /CTRL-Pint/app/dist et ensuite dans le dossier associé à la langue de votre raspberry (en pour anglais, fr pour français).
+![image](https://user-images.githubusercontent.com/89463135/229141267-49f951ae-d31a-4668-bbdd-5c8941d70087.png)  ![image](https://user-images.githubusercontent.com/89463135/229146206-f04cc97f-9d2d-4216-9a31-42091a0e106b.png)
 7. Ouvrez un terminal dans le dossier /CTRL-Print/app.
 8. Installez la commande asar avec la commande suivante: npm install --engine-strict asar. C'est pour compresser les fichiers compilés en asar, car le Raspberry pi à besoin de ce type de fichier pour démarrer l'application puiqu'il cherche un fichier app.asar pour démarrer l'application.
 9. Entrez la commande: asar pack *emplacement du dossier app* app.asar. Exemple: asar pack C:\Users\User\app app.asar
