@@ -1,7 +1,7 @@
 /*
 *@file bottom-bar.component.ts
-*@author David Corriveau
-*@date Avril 2023
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
 *@brief Classe qui affiche le nom de l'imprimante et son état dans le bas du menu principal.
 */
 import { Component, OnDestroy } from '@angular/core';

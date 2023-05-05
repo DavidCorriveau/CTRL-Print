@@ -1,5 +1,7 @@
 /*
 *@file update.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
 *@brief Classe pour mettre à jour l'application
 */
 import { Component, EventEmitter, NgZone, OnInit, Output } from '@angular/core';

@@ -1,5 +1,7 @@
 /*
 *@file toggle-switch.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
 *@brief Classe gère les animations.
 */
 import { Component, EventEmitter, Input, Output } from '@angular/core';

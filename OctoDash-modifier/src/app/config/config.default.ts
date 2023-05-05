@@ -1,7 +1,7 @@
 /*
 *@file config.defaults.ts
-*@author David Corriveau
-*@date Avril 2023
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Ajout des propriétés ID des capteurs et températures par défaut de l'enceinte. Ajout de l'entête de fichier
 *@brief Fichier contenant la configuration de base de l'application
 */
 import { Config } from './config.model';

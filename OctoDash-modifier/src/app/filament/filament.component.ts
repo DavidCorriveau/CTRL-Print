@@ -1,5 +1,6 @@
 /*
 *@file filament.component.ts
+*@author UnchartedBull
 *@brief Classe pour pouvoir changer le filament de l'imprimante. Cette action se fait en plusieurs étapes. Le première est de sélectionner quel type
 * de filament est à changer si le plugin filament manager est activé. Si non, cette étape est ignorée. Ensuite, la buse de l'imprimante chauffe.
 * la température à atteindre peut être changée. Après, l'utilisateur doit entrer son nouveau filament dans l'imprimante. La dernière étape est

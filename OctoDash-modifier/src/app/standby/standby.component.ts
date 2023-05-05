@@ -1,5 +1,7 @@
 /*
 *@file standby.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
 *@brief Classe qui permet de se connecter à une imprimante.
 */
 import { Component, OnDestroy, OnInit } from '@angular/core';

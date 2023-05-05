@@ -1,5 +1,7 @@
 /*
 *@file job-status.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
 *@brief Classe qui indique les information de l'impression. Elle affiche le temps restant, la quantité de filament restante à utiliser
 */
 import { Component, OnDestroy, OnInit } from '@angular/core';

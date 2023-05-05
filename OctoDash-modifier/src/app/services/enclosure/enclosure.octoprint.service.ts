@@ -1,7 +1,8 @@
 /*
 *@file control.component.ts
-*@author David Corriveau
-*@date Avril 2023
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Définitions des nouvelles méthodes du fichier enclosure.service.ts qui se trouve dans
+* le même dossier que ce fichier. Ajout de l'entête du fichier.
 *@brief Classe pour aller récupérer des information sur le plugin Enclosure. Elle récupère les informations des capteurs, paramètre les températures
 * voulues et d'autre action possible avec ce plugin.
 */

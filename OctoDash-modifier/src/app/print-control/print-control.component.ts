@@ -1,7 +1,8 @@
 /*
 *@file print-control.component.ts
-*@author David Corriveau
-*@date Avril 2023
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Ajout de deux cases pour paramétrer les températures de l'enceinte lors d'une impression. 
+* Ajout de l'entête du fichier.
 *@brief Classe qui permet de controler l'imprimante lorsqu'elle est en train d'imprimer. On peut changer les températures et la vitesse
 * du ventilateur. Pour annuler l'impression, la mettre en pause, la continuer ou la recommencer.
 */

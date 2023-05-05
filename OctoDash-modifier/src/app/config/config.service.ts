@@ -1,7 +1,8 @@
 /*
-*@file config.models.ts
-*@author David Corriveau
-*@date Avril 2023
+*@file config.service.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Ajout de fonctions pour récupérer les ID des capteurs et des valeur par défaut de la configuration de 
+* l'interface. Ajout de l'entête de fichier.
 *@brief Classe service qui permet d'aller récupérer ou modifier les différentes configurations de l'application 
 */
 import { HttpHeaders } from '@angular/common/http';

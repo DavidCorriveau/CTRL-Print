@@ -1,5 +1,7 @@
 /*
 *@file main-screen.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
 *@brief Classe s'occupe de l'affichage du menu principale Selon l'état de l'imprimante.
 */
 import { Component } from '@angular/core';

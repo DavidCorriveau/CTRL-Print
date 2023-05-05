@@ -1,7 +1,8 @@
 /*
 *@file enclosure.service.ts
-*@author David Corriveau
-*@date Avril 2023
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Ajout de méthode pour récupérer les température lus et les températures paramètrés et une méthode pour
+* paramètrer des température. Ajout de l'entête du fichier.
 *@brief Classe utilisable ailleur pour récupérer des informations sur l'enceinte.
 */
 import { Injectable } from '@angular/core';

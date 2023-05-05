@@ -1,5 +1,7 @@
 /*
 *@file files.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
 *@brief Classe qui permet d'aller récupérer les fichiers d'impressions sur OctoPrint et les affiches à l'écran. Il est possible d'ajouter des 
 * filtres pour trouvé un fichier. Cette classe permet de commencer une impression.
 */

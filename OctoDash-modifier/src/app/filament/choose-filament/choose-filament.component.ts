@@ -1,3 +1,10 @@
+/*
+*@file choose-filament.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
+*@brief Classe pour la sélection du nouveau filament à insérer pour la procédure de changement de filament. Cette section s'exécute si le plugin
+* FilamentManger est activé dans les paramètres de l'interface. 
+*/
 import { Component, EventEmitter, Output } from '@angular/core';
 
 import { FilamentSpool } from '../../model';

@@ -1,7 +1,8 @@
 /*
 *@file settings.component.ts
-*@author David Corriveau
-*@date Avril 2023
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Ajout d'un clavier sur chaque zone de texte qui en lien avec le plugin Enclosure. Ce clavier
+* permet de changer des valeurs d'ID des capteurs et des température par défaut ajoutés. Ajout de l'entête du fichier.
 *@brief Classe qui permet de configuration de l'application. On peut activer ou désactiver des plugins, changer des valeur par défaut, donner un nom
 * à l'imprimante, etc.
 */
@@ -63,42 +64,68 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }, 400);
   }
 
+  /*
+  *@brief: Méthode pour gérer les actions du clavier pour changer la valeur de la zone de texte
+  *@param: source: conteint la variable à changer
+  *@param: value: contient la nouvelle à ajouter ou signal pour effacer un caractère
+  *@return: source qui contient la valeur changé en n
+  */
   public changeValue(source: string, value: string): number{
-    let stringTemporaire = "";
-    if(value != "backspace")
+    let stringTemporaire = "";  // Crée une variable temporaire pour garder en mémoire la valeur de base
+    if(value != "backspace")  // Si le bouton appuyé n'est pas le backspace
     {
-      source = source + value;
+      source = source + value;  // Ajoute à la valeur le chiffre inscrit sur le boutn
     }
-    else
+    else  // Si le bouton appuyé est le backspace
     {
-      if(source.length == 1)
+      if(source.length == 1)  // Si la valeur a un seul caractère
       {
-        source = '0';
+        source = '0'; // Met la valeur à 0
       }
-      else
+      else  // Si la valeur plus qu'un caractère
       {
-        for(let i=0; i<source.length-1;i++)
+        for(let i=0; i<source.length-1;i++) // Boucle qui parcour chaque caractère de la valeur sauf le dernier
         {
-          stringTemporaire += source[i];
+          stringTemporaire += source[i];  // Garde en mémoire les caractères
         }
-        source = stringTemporaire;
+        source = stringTemporaire;  // Met la valeur égale à celle mémoire qui ne contient pas le dernier caractère
       }
     }
-    return +source
+    return +source  // Retour la nouvelle valeur en nombre
   }
 
+  /*
+  *@brief: Méthode pour changer la température par défaut pour l'emplacement de l'imprimante
+  *@param: value: contient la nouvelle température par défaut
+  *@return: rien
+  */
   changeDefaultEnclosureValue(value: string): void {
     this.config.plugins.enclosure.defaultTemperature.enclosure = this.changeValue(this.config.plugins.enclosure.defaultTemperature.enclosure.toString(),value)
   }
 
+  /*
+  *@brief: Méthode pour changer la température par défaut pour l'emplacement des filaments
+  *@param: value: contient la nouvelle température par défaut 
+  *@return: rien
+  */
   changeDefaultStorageValue(value: string): void {
     this.config.plugins.enclosure.defaultTemperature.storage = this.changeValue(this.config.plugins.enclosure.defaultTemperature.storage.toString(),value)
   }
 
+  /*
+  *@brief: Méthode pour changer la valeur du ID du capteur de l'emplacement de l'imprimante
+  *@param: value: contient le nouvel ID du capteur
+  *@return: rien
+  */
   changeValueEnclosureSensor(value: string): void {
     this.config.plugins.enclosure.enclosureSensorID = this.changeValue(this.config.plugins.enclosure.enclosureSensorID.toString(),value);
   }
 
+  /*
+  *@brief: Méthode pour changer la valeur du ID du capteur de l'emplacement de l'imprimante
+  *@param: value: contient le nouvel ID du capteur
+  *@return: rien
+  */
   changeValueStorageSensor(value: string): void {
     this.config.plugins.enclosure.storageSensorID = this.changeValue(this.config.plugins.enclosure.storageSensorID.toString(),value);
   }

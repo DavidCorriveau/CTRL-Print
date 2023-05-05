@@ -1,5 +1,7 @@
 /*
 *@file notification.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
 *@brief Classe qui permet d'afficher des notifications.
 */
 import { Injectable } from '@angular/core';

@@ -1,3 +1,9 @@
+/*
+*@file purge-filament.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
+*@brief Classe pour la purge de la buse dans la procédure du changement de filament.
+*/
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 import { ConfigService } from '../../config/config.service';

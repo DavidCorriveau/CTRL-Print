@@ -1,3 +1,9 @@
+/*
+*@file move-filament.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
+*@brief Classe qui n'est pas utilisé par l'interface utilisateur.
+*/
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 
 import { ConfigService } from '../../config/config.service';

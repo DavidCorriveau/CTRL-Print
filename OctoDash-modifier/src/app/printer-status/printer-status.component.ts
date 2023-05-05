@@ -1,7 +1,8 @@
 /*
 *@file printer-status.component.ts
-*@author David Corriveau
-*@date Avril 2023
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Ajout de deux boutons pour paramétrer les températures de l'enceinte et de les afficher. 
+* Ajout de l'entête du fichier.
 *@brief Classe qui affiche les informations de températures de l'imprimante et de l'enceinte. On peut changer ces paramètres en appuyant sur les
 * boutons qui sont les icones associés à leur valeur affichée.
 */

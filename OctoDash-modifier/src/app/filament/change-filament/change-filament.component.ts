@@ -1,3 +1,9 @@
+/*
+*@file change-filament.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
+*@brief Classe pour l'étape de l'insertion du nouveau filament pour la procédure de changement de filament
+*/
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { ConfigService } from '../../config/config.service';

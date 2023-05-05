@@ -1,5 +1,7 @@
 /*
 *@file height-progress.component.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - ajout de l'entête du fichier
 *@brief Classe qui affiche la progression de l'impression en montrant le nombre de couche fait et le restant.
 */
 import { Component, OnDestroy, OnInit } from '@angular/core';

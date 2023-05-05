@@ -1,7 +1,8 @@
 /*
 *@file config.models.ts
-*@author David Corriveau
-*@date Avril 2023
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Ajout d'un interface pour des températures par défaut. Ajout dans l'interface EnclosurePlugin des propriétés ID
+* des capteurs et température par défaut. Ajout de l'entête de fichier
 *@brief Fichier contenant les différentes interfaces pour la configuration
 */
 import { HttpHeaders } from '@angular/common/http';
