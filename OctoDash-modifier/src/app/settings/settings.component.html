@@ -18,6 +18,10 @@
             <fa-icon [icon]="['fas', 'chevron-right']"></fa-icon>
           </li>
           <li (click)="changePage(4, 0, 'forward')">
+            <span i18n="@@settings-about" class="settings__section-heading">connection</span>
+            <fa-icon [icon]="['fas', 'chevron-right']"></fa-icon>
+          </li>
+          <li (click)="changePage(5, 0, 'forward')">
             <span i18n="@@settings-about" class="settings__section-heading">about</span>
             <fa-icon [icon]="['fas', 'chevron-right']"></fa-icon>
           </li>
@@ -30,10 +34,6 @@
           update available!
         </span>
         <span class="settings__save" (click)="updateConfig()">save</span>
-        <span class="settings__made">
-          made with <fa-icon [icon]="['fas', 'heart']" class="settings__made-heart"></fa-icon>
-          by /u/UnchartedBull
-        </span>
       </div>
       <div class="settings__content settings__content-inactive" #settingsGeneral>
         <span class="settings__heading" (click)="changePage(0, 1, 'backward')">
@@ -694,8 +694,28 @@
             [disabled]="!config.plugins.tasmotaMqtt.enabled" />
         </div>
       </div>
-      <div class="settings__content settings__content-inactive" #settingsCredits>
+      <div class="settings__content settings__content-inactive" #settingsConnection>
         <span class="settings__heading" (click)="changePage(0, 4, 'backward')">
+          <fa-icon [icon]="['fas', 'chevron-left']" class="settings__heading-back"></fa-icon>
+          <span i18n="@@about">connection</span>
+        </span>
+        <div class="settings__scroll">
+          <span class="settings__heading-2">Serial port</span>
+          <select class="settings__listbox1" id="ports" name='ports' [(ngModel)]="portSelected" (click)="showAvailablePorts()">
+            <option *ngFor="let portsOption of availablePortsOptions" [value]="portsOption">
+              {{ portsOption }}
+            </option>
+          </select>
+          <span class="settings__heading-2">Baudrate</span>
+          <select class="settings__listbox2" id="ports" name='ports' [(ngModel)]="baudrateSelected" (click)="showAvailableBaudrates()">
+            <option *ngFor="let baudratesOption of availableBaudratesOptions" [value]="baudratesOption">
+              {{ baudratesOption }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="settings__content settings__content-inactive" #settingsCredits>
+        <span class="settings__heading" (click)="changePage(0, 5, 'backward')">
           <fa-icon [icon]="['fas', 'chevron-left']" class="settings__heading-back"></fa-icon>
           <span i18n="@@about">about</span>
         </span>

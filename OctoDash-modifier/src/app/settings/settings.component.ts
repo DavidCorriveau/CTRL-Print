@@ -2,8 +2,9 @@
 *@file settings.component.ts
 *@author UnchartedBull
 *@version 2 David Corriveau, mai 2023 - Ajout d'un clavier sur chaque zone de texte qui en lien avec le plugin Enclosure. Ce clavier
-* permet de changer des valeurs d'ID des capteurs et des température par défaut ajoutés. Ajout de l'entête du fichier.
-*@brief Classe qui permet de configuration de l'application. On peut activer ou désactiver des plugins, changer des valeur par défaut, donner un nom
+* permet de changer des valeurs d'ID des capteurs et des température par défaut ajoutés.Ajout de la posibilité de changer le port 
+* et le baudrate de la communication série entre OctoPrint et l'imprimante. Ajout de l'entête du fichier.
+*@brief Classe qui permet de configuration de l'interface utilisateur. On peut activer ou désactiver des plugins, changer des valeur par défaut, donner un nom
 * à l'imprimante, etc.
 */
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
@@ -12,7 +13,9 @@ import { Config } from '../config/config.model';
 import { ConfigService } from '../config/config.service';
 import { ElectronService } from '../electron.service';
 import { NotificationType } from '../model';
+import { connectionInfo } from '../model/octoprint';
 import { NotificationService } from '../notification/notification.service';
+import { PrinterService } from '../services/printer/printer.service';
 
 @Component({
   selector: 'app-settings',
@@ -25,6 +28,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   @ViewChild('settingsGeneral') private settingsGeneral: ElementRef;
   @ViewChild('settingsOctoDash') private settingsOctoDash: ElementRef;
   @ViewChild('settingsPlugins') private settingsPlugins: ElementRef;
+  @ViewChild('settingsConnection') private settingsConnection: ElementRef
   @ViewChild('settingsCredits') private settingsCredits: ElementRef;
   @Input() keyboardHTML: string;
 
@@ -41,12 +45,18 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private overwriteNoSave = false;
   private pages = [];
   public update = false;
+  public availablePortsOptions: string[] = [];  // Tableau pour contenir les ports disponibles. Son contenu est affiché dans son droplist
+  public availableBaudratesOptions: number[] = [];  // Tableau pour contenir les différents bauderates disponibles. Son contenu est affiché dans son droplist
+  public portSelected: string;  // Variable qui contient le port sélectionné. Son contenu est affiché dans la case de l'option sélectionné de son droplist
+  public baudrateSelected: number;  // Variable qui contient le bauderate sélectionné. Son contenu est affiché dans la case de l'option sélectionné de son droplist
+  public info: connectionInfo;  // Objet qui contient toutes les informations de la connexion d'Octoprint à une imprimante.
 
   public constructor(
     private configService: ConfigService,
     private notificationService: NotificationService,
     private electronService: ElectronService,
     public service: AppService,
+    public printerservice: PrinterService,  // Objet pour récupérer les infomations de la connexion et de changer ses paramètres.
   ) {
     this.config = this.configService.getCurrentConfig();
     this.config.octoprint.urlSplit = this.configService.splitOctoprintURL(this.config.octoprint.url);
@@ -59,14 +69,16 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.settingsGeneral.nativeElement,
         this.settingsOctoDash.nativeElement,
         this.settingsPlugins.nativeElement,
+        this.settingsConnection.nativeElement,  // Ajout d'une section connexion dans la fenêtre des paramètres
         this.settingsCredits.nativeElement,
       ];
     }, 400);
+    this.lectureInfoConnection(); // Effectue une première lecture des informations de connexions. Important de garder, car aussi non les lecture seront décalés (mystère non résolu)
   }
 
   /*
   *@brief: Méthode pour gérer les actions du clavier pour changer la valeur de la zone de texte
-  *@param: source: conteint la variable à changer
+  *@param: source: contient la variable à changer
   *@param: value: contient la nouvelle à ajouter ou signal pour effacer un caractère
   *@return: source qui contient la valeur changé en n
   */
@@ -130,6 +142,44 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.config.plugins.enclosure.storageSensorID = this.changeValue(this.config.plugins.enclosure.storageSensorID.toString(),value);
   }
 
+  /*
+  *@brief: Méthode pour récupérer les ports disponibles
+  *@param: aucun
+  *@return: rien
+  */
+  showAvailablePorts(): void {
+    this.lectureInfoConnection();
+    this.availablePortsOptions = [];  // Efface les anciens port disponibles
+    for(let i=0;i<this.info.options.ports.length;i++) // Boucle qui parcour tous les ports disponibles
+    { 
+      this.availablePortsOptions[i] = this.info.options.ports[i]; // Ajoute les ports dans la droplist des ports
+    }
+  }
+
+  /*
+  *@brief: Méthode pour récupérer les bauderates disponibles
+  *@param: aucun
+  *@return: rien
+  */
+  showAvailableBaudrates(): void {
+    this.lectureInfoConnection();
+    this.availableBaudratesOptions = [];  // Efface les anciens bauderates disponibles
+    for(let i=0;i<this.info.options.baudrates.length;i++) // Boucle qui parcour tous les bauderates disponibles
+    {
+      this.availableBaudratesOptions[i] = this.info.options.baudrates[i]; // Ajoute les bauderates dans la droplist des bauderates
+    }
+  }
+
+  /*
+  *@brief: Méthode pour récupérer les informations de connexions
+  *@param: aucun
+  *@return: rien
+  */
+  private lectureInfoConnection(): void {
+    this.printerservice.getCurrentConnection().subscribe({
+      next: (connectionInfo: connectionInfo) => (this.info = connectionInfo) // Garde en mémoire les informations dans l'objet connectionInfo
+    });
+  }
   public ngOnDestroy(): void {
     this.electronService.removeListener('configSaved', this.onConfigSaved.bind(this));
     this.electronService.removeListener('configSaveFail', this.onConfigSaveFail.bind(this));
@@ -171,15 +221,29 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.pages[current].classList.remove('settings__content-slideout-' + direction);
       this.pages[page].classList.remove('settings__content-slidein-' + direction);
     }, 370);
+    if(page == 4 && direction == 'forward') // Si on accède à la page de connexion
+    {
+      this.showAvailablePorts();  
+      this.showAvailableBaudrates();  
+      this.portSelected = this.info.current.port; // Récupère le port présentement sélectionné et l'affiche
+      this.baudrateSelected = this.info.current.baudrate; // Récupère le bauderate présentement sélectionné et l'affiche
+    }
   }
 
   public updateConfig(): void {
+    // Variable pour convertir le bauderate en string, car la valeur dans la variable qui contient le bauderate sélectionné ne fonctionne pas 
+    // pour changer ce paramètre dans la connexion. Alors, pour régler se problème, on transforme la valeur en string pour la retransformer
+    // en number. C'est stupide, mais fonctionnel
+    let workingBauderate: string; 
     const config = this.configService.createConfigFromInput(this.config);
-
     this.electronService.on('configSaved', this.onConfigSaved.bind(this));
     this.electronService.on('configSaveFail', this.onConfigSaveFail.bind(this));
-
     this.configService.saveConfig(config);
+    workingBauderate = this.baudrateSelected.toString();  // Converti le bauderate en string
+    if(this.portSelected != this.info.current.port || this.baudrateSelected != this.info.current.baudrate)  // Si le port ou le bauderate choisi est différent que celui actuel
+    {
+      this.printerservice.setConnection(this.portSelected,+workingBauderate); // Change le port et le bauderate de la connexion entre OctoPRint et l'imprimante
+    }
   }
 
   private onConfigSaveFail(_, errors: string[]) {

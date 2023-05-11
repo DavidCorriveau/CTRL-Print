@@ -1,8 +1,8 @@
 /*
 *@file printer.model.ts
-*@author David Corriveau
-*@date Avril 2023
-*@brief Fichier contenant des interfaces pour les informations de l'imprimante
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Ajout de l'interface Temperature
+*@brief Models pour les informations de l'imprimante.
 */
 export interface PrinterStatus {
   status: PrinterState;

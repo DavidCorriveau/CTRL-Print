@@ -1,10 +1,19 @@
+/*
+*@file printer.octoprint.service.ts
+*@author UnchartedBull
+*@version 2 David Corriveau, mai 2023 - Ajout des définitions des méthodes pour récupérer les options et configurer la connexion entre OctoPrint et l'imprimante.
+* Ajout de l'entête du fichier.
+*@brief Classe qui définit les méthodes qui permet de configuration l'application OctoPrint. On peut changer les températures, exécuter des commandes GCODE, agir sur
+* l'extrudeur, etc.
+*/
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ConfigService } from '../../config/config.service';
-import { NotificationType, PrinterProfile } from '../../model';
+import { NotificationType, PrinterProfile, } from '../../model';
+import { connectionInfo } from '../../model/octoprint';
 import {
   DisconnectCommand,
   ExtrudeCommand,
@@ -14,6 +23,7 @@ import {
   OctoprintPrinterProfiles,
   TemperatureHeatbedCommand,
   TemperatureHotendCommand,
+  ConnectCommand,
 } from '../../model/octoprint';
 import { NotificationService } from '../../notification/notification.service';
 import { PrinterService } from './printer.service';
@@ -25,6 +35,40 @@ export class PrinterOctoprintService implements PrinterService {
     private notificationService: NotificationService,
     private http: HttpClient,
   ) {}
+
+  /*
+  *@brief: Méthode qui récupère les infomation de connexions entre OctoPrint et l'imprimante
+  *@param: aucun
+  *@return: les informations de connexions
+  */
+  public getCurrentConnection(): Observable<connectionInfo> {
+   return this.http // Requête HTTP pour aller récupérer les informations de connexions
+    .get<connectionInfo>(
+      this.configService.getApiURL('connection'),
+      this.configService.getHTTPHeaders(),
+    )
+  }
+
+  /*
+  *@brief: Méthode qui configure la connexion entre OctoPrint et l'imprimante
+  *@param: port: le nom du port désiré
+  *@param: bauderate: le bauderate désiré
+  *@return: rien
+  */
+  public setConnection(port: string, baudrate: number): void {
+    const disconnectCommand: ConnectCommand = { // Création de la commande pour déconnecter la connexion actuelle
+      command: "disconnect"
+    };
+    const connectionCommand: ConnectCommand = { // Création de la commande pour la nouvelle connexion
+      command: "connect",
+      port: port,
+      baudrate: baudrate,
+    };
+    // Arrête la connecion actuelle pour pouvoir changer les paramètres de connexions par après
+    this.http.post(this.configService.getApiURL('connection'), disconnectCommand ,this.configService.getHTTPHeaders()).subscribe(); 
+    // Démarre une connexion avec les nouveaux paramètres
+    this.http.post(this.configService.getApiURL('connection'), connectionCommand ,this.configService.getHTTPHeaders()).subscribe(); 
+  }
 
   public getActiveProfile(): Observable<PrinterProfile> {
     return this.http

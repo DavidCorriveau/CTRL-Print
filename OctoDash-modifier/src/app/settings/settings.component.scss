@@ -131,7 +131,20 @@
       font-size: 2.5vw;
     }
   }
-
+  &__listbox1 {
+    background-color: #313642;
+    border: solid;
+    border-color: white;
+    text-emphasis-color: white;
+    width: 80%;
+  }
+  &__listbox2 {
+    background-color: #313642;
+    border: solid;
+    border-color: white;
+    text-emphasis-color: white;
+    width: 40%;
+  }
   &__checkbox {
     position: absolute;
     top: 0;
